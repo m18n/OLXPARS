@@ -1,0 +1,1 @@
+/usr/bin/cc -g  -rdynamic CMakeFiles/OlxParse.dir/main.c.o CMakeFiles/OlxParse.dir/corecurl.c.o CMakeFiles/OlxParse.dir/coreparser.c.o CMakeFiles/OlxParse.dir/olxparse.c.o  -o OlxParse  -lcurl 
