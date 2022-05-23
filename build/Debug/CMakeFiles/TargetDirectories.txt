@@ -1,3 +1,0 @@
-/home/misha/Стільниця/OLX/build/Debug/CMakeFiles/rebuild_cache.dir
-/home/misha/Стільниця/OLX/build/Debug/CMakeFiles/edit_cache.dir
-/home/misha/Стільниця/OLX/build/Debug/CMakeFiles/OlxParse.dir

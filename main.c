@@ -35,7 +35,7 @@ int main(){
     //strcpy(input.search,"https://www.olx.ua/d/elektronika/telefony-i-aksesuary/mobilnye-telefony-smartfony/q-%D1%82%D0%B5%D0%BB%D0%B5%D1%84%D0%BE%D0%BD/");
     input.count=50;
     //printf("OKEY START PARSE COUNT: %d SITE: %s\n",input.count,input.search);
-    CURL* curl;
+    CURL* curl=NULL;
     // site s;
     // CreateSite(&s,1000000000);
     //Read(&s);
