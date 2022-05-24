@@ -118,10 +118,10 @@ stdarray ParseSearchPage(site* s,olxdata data){
     for(int i=0;i<data.count;i++){
         PSsearch p;
         char*link=ParseLink(s,&indexparse,i);
-        if(link!=NULL){
-            strcpy(p.link,link);
-            free(link);
-        }
+        if(link==NULL)
+            break;
+        strcpy(p.link,link);
+        free(link);
         ProcLink(&p);
         p.price=ParsePrice(s,&indexparse,i);
         printf("PSEARCH: PRICE[ %d ] LINK[ %s ]\n",p.price,p.link);
