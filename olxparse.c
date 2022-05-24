@@ -1,10 +1,11 @@
 #include"include/olxparse.h"
 void ProcLink(PSsearch* pr){
-    
+    if(pr->link==NULL)
+        return;
     const char add[]="https://olx.ua";
     int sizeadd=strlen(add);
     int sizelink=strlen(pr->link);
-    char temp[200];
+    char temp[300];
     memcpy(temp,add,sizeadd);
     memcpy(temp+sizeadd,pr->link,sizelink);
     int allsize=sizelink+sizeadd;
@@ -14,6 +15,9 @@ void ProcLink(PSsearch* pr){
 int ParsePrice(site* s,int* index,int count){
     int in=*index;
     int divprice=SearchWordIndex(s->html,in,s->indexrecord,1,"\"ad-price\"");
+    if(divprice==-1){
+        return -1;
+    }
     int end = SearchWordIndex(s->html, divprice, s->indexrecord, 1, ".<");
     printf("END:\n");
     Show(&s->html[end-10],10);
@@ -25,8 +29,9 @@ int ParsePrice(site* s,int* index,int count){
     }*/
     char* price=GetStringSign(s->html,end,start,' ');
     if (price == NULL) {
+        printf("DIV PRICE : %d, START DIV: %d, END DIV: %d\n",divprice,start,end);
         printf("ERROR PARSE PRICE\n");
-        return -1;
+        return -2;
     }
     printf("SIZE INDEX: %d\n",s->indexrecord);
     //printf("STR PRICE:\n");
@@ -54,18 +59,27 @@ int StrTimeToMin(char* str){
     return imin;
 }
 char* ParseLink(site* s,int* index,int count){
-    *index=SearchWordIndex(s->html,*index,s->indexrecord,1,"data-cy=\"l-card\"");
-    *index=SearchWordIndex(s->html,*index,s->indexrecord,1,"href=\"");
-    *index+=6;
-    char* link=GetStringSign(s->html,s->indexrecord,*index,'\"');
-    
+    int divstart=SearchWordIndex(s->html,*index,s->indexrecord,1,"data-cy=\"l-card\"");
+    if(divstart==-1)
+        return NULL;
+    int href=SearchWordIndex(s->html,*index,s->indexrecord,1,"href=\"");
+    href+=6;
+    char* link=GetStringSign(s->html,s->indexrecord,href,'\"');
+    *index=href;
     return link;
 }
 timepost ParseTime(site* s,int* index,int count){
-    *index=SearchWordIndex(s->html,*index,s->indexrecord,1,"\"location-date\"");
-    int start=SearchWordIndex(s->html,*index,s->indexrecord,3,">");
+    int startdiv=SearchWordIndex(s->html,*index,s->indexrecord,1,"\"location-date\"");
+    if(startdiv==-1)
+    {
+        timepost t;
+        t.day=-1;
+        t.minutes=-1;
+        return t;
+    }
+    int start=SearchWordIndex(s->html,startdiv,s->indexrecord,3,">");
     start++;
-    int end=SearchWordIndex(s->html,*index,s->indexrecord,1,"</p>");
+    int end=SearchWordIndex(s->html,start,s->indexrecord,1,"</p>");
     //Show(s->html+start,120);
     int done=SearchWordIndex(s->html,start,end,1,":");
     int minutest=0;
@@ -99,19 +113,19 @@ timepost ParseTime(site* s,int* index,int count){
     return p;
 }
 stdarray ParseSearchPage(site* s,olxdata data){
-    int indexprice=0;
-    int indexlink=0;
-    int indextime=0;
+    int indexparse=0;
     PSsearch* arrp=malloc(sizeof(PSsearch)*data.count);
     for(int i=0;i<data.count;i++){
         PSsearch p;
-        p.price=ParsePrice(s,&indexprice,i);
-        char*link=ParseLink(s,&indexlink,i);
-        strcpy(p.link,link);
-        free(link);
+        char*link=ParseLink(s,&indexparse,i);
+        if(link!=NULL){
+            strcpy(p.link,link);
+            free(link);
+        }
         ProcLink(&p);
+        p.price=ParsePrice(s,&indexparse,i);
         printf("PSEARCH: PRICE[ %d ] LINK[ %s ]\n",p.price,p.link);
-        timepost time=ParseTime(s,&indextime,i);
+        timepost time=ParseTime(s,&indexparse,i);
         printf("TIME DAY: %d, MINUTES: %d\n",time.day,time.minutes);
         p.time=time;
         arrp[i]=p;

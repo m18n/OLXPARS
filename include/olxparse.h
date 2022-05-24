@@ -15,7 +15,7 @@ typedef struct PSsearch
 {
     int price;
     int countview;
-    char link[200];
+    char link[300];
     timepost time;
 }PSsearch;
 
