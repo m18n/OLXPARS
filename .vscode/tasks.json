@@ -9,10 +9,10 @@
             "command": "cmake",
             "args": [
                 "-DCMAKE_BUILD_TYPE=Debug",
-                "../../"
+                "${workspaceFolder}"
             ],
             "options": {
-                "cwd": "${workspaceFolder}/build/Debug"
+                "cwd": "${workspaceFolder}/build/x64/Debug"
             }
         },
         {
@@ -20,7 +20,7 @@
             "type": "shell",
             "command": "make",
             "options": {
-                "cwd": "${workspaceFolder}/build/Debug"
+                "cwd": "${workspaceFolder}/build/x64/Debug"
             }
         },
         {
@@ -37,10 +37,10 @@
             "command": "cmake",
             "args": [
                 "-DCMAKE_BUILD_TYPE=Release",
-                "../../"
+                "${workspaceFolder}"
             ],
             "options": {
-                "cwd": "${workspaceFolder}/build/Release"
+                "cwd": "${workspaceFolder}/buildx/x64/Release"
             }
         },
         {
@@ -48,7 +48,7 @@
             "type": "shell",
             "command": "make",
             "options": {
-                "cwd": "${workspaceFolder}/build/Release"
+                "cwd": "${workspaceFolder}/build/x64/Release"
             }
         },
         {
