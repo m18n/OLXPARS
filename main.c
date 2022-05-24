@@ -14,6 +14,11 @@ olxdata Menu(){
 void Record(char* arr,int size){
     FILE* f;
     f=fopen("test.html","w");
+    if (f == NULL) {
+        printf("ERROR RECORD TO FILE\n");
+        return;
+    }
+    printf("SIZE INDEX: %d\n",size);
     fprintf(f,"%s",arr);
     fclose(f);
 }
@@ -42,16 +47,12 @@ int main(){
    
     site s=GetSite(curl,input.search,100000000);
     //printf("HTML:\n%s\n",s.html);
-    //Record(s.html,s.indexrecord);
-   // stdarray ar=ParseSearchPage(&s,input);
-    //ParseProductPage(&s,ar,curl);
-    SetSitePost(&s,curl,"https://www.olx.ua/api/v1/offers/745060221/page-views");
-    //printf("\n%s\n",s.html);
-    Show(s.html,200);
-    int index=0;
-  //  ParseViews(&s);
-
     Record(s.html,s.indexrecord);
+    stdarray ar=ParseSearchPage(&s,input);
+    ParseProductPage(&s,ar,curl);
+    
+
+    //Record(s.html,s.indexrecord);
     DeleteSite(&s);
     return 0;
 }

@@ -95,17 +95,17 @@ void Show(char* str,int size){
     printf("\n%s\n",str);
     str[size]=test;
 }
-char** Tok(char* str,char sign){
-    int size=1;
+char** Tok(char* str,char sign,int* rsize){
+    int tsize=1;
     int sizestr=strlen(str)+1;
     for(int i=0;i<sizestr;i++){
         if(str[i]==sign){
-            size++;
+            tsize++;
         }
     }
     int last=0;
     int index=0;
-    char** arr=malloc(size);
+    char** arr=malloc(tsize);
     for(int i=0;i<sizestr;i++){
         if(str[i]==sign||i==sizestr-1){
             int size=i-last+1;
@@ -117,6 +117,8 @@ char** Tok(char* str,char sign){
             index++;
         }
     }
+    *rsize = tsize;
+
     return arr;
 }
 char *GetString(char *arr, int startindex, int size)
@@ -140,9 +142,12 @@ char *GetStringSign(char *arr, int sizearr, int startindex, char sign)
         int a=10;
     
     }
-    int size=index-startindex;
-    char *text = (char *)malloc(size+1);
-    memcpy(text, arr + startindex, size);
-    text[size]='\0';
+    char* text = NULL;
+    if (index != 0) {
+        int size = index - startindex;
+        text =malloc(size + 1);
+        memcpy(text, arr + startindex, size);
+        text[size] = '\0';
+    }
     return text;
 }

@@ -13,33 +13,43 @@ void ProcLink(PSsearch* pr){
 }
 int ParsePrice(site* s,int* index,int count){
     int in=*index;
-    in=SearchWordIndex(s->html,in,s->indexrecord,1,"\"ad-price\"");
-   
-    // char test=s->html[in+1200];
-    // s->html[in+1200]='\0';
-    // printf("\n%s\n",&s->html[in]);
-    // s->html[in+1200]=test;
-    in=SearchWordIndex(s->html,in,s->indexrecord,1,"грн");
-    
-    int end=in;
-    in=SearchWordIndex(s->html,in,0,1,">");
-    in+=1;
-    
-    end=end-in;
-    char* price=GetStringSign(s->html,s->indexrecord,in,'.');
-    price[end]='\0';
+    int divprice=SearchWordIndex(s->html,in,s->indexrecord,1,"\"ad-price\"");
+    int end = SearchWordIndex(s->html, divprice, s->indexrecord, 1, ".<");
+    printf("END:\n");
+    Show(&s->html[end-10],10);
+    int start=SearchWordIndex(s->html,end,0,1,">");
+    start++;
+    /*if (end == start) {
+        printf("ERROR\n");
+        Show(&s->html[divprice], 2000);
+    }*/
+    char* price=GetStringSign(s->html,end,start,' ');
+    if (price == NULL) {
+        printf("ERROR PARSE PRICE\n");
+        return -1;
+    }
+    printf("SIZE INDEX: %d\n",s->indexrecord);
+    //printf("STR PRICE:\n");
+    //Show(&s->html[start], end-start);
+    //printf("PRICE CHAR: %s\n",price);
+
     int inpr=atoi(price);
     free(price);
-    *index=in;
+    *index=end;
     return inpr;
 }
 int StrTimeToMin(char* str){
-    char** arr=Tok(str,':');
+    int sizearr = 0;
+    char** arr=Tok(str,':',&sizearr);
     char* h=arr[0];
     char* min=arr[1];
     int ih=atoi(h);
     int imin=atoi(min);
     imin+=ih*60;
+    for (int i = 0; i < sizearr; i++) {
+        free(arr[i]);
+    }
+    
     //printf("HOURSE: %s, MINUTES: %s\n",h,min);
     return imin;
 }
@@ -59,15 +69,21 @@ timepost ParseTime(site* s,int* index,int count){
     //Show(s->html+start,120);
     int done=SearchWordIndex(s->html,start,end,1,":");
     int minutest=0;
-    char* time;
+    char* time=NULL;
     timepost p;
       p.day=0;
     if(done==-1){
-        time=GetStringSign(s->html,s->indexrecord,start,' ');
+        time=GetStringSign(s->html,end,start,' ');
         p.day=atoi(time);
     }else{
         int space=SearchWordIndex(s->html,done,0,1," ");
         time=GetStringSign(s->html,s->indexrecord,space+1,'<');
+        printf("START SHOW:\n");
+        Show(&s->html[start],100);
+        printf("END SHOW:\n");
+        Show(&s->html[end], 100);
+        printf("DONE:\n");
+        Show(&s->html[done], 100);
         minutest=StrTimeToMin(time);
     }
     
@@ -75,8 +91,11 @@ timepost ParseTime(site* s,int* index,int count){
     p.minutes=minutest;
   
     *index=end;
-    free(time);
+
+       // printf("PARSE TIME: %s\n",time);
     
+    free(time);
+    int a = 10;
     return p;
 }
 stdarray ParseSearchPage(site* s,olxdata data){
@@ -103,8 +122,10 @@ stdarray ParseSearchPage(site* s,olxdata data){
     return ar;
 }
 int ParseViews(site* s){
-    int index=SearchWordIndex(s->html,0,s->indexrecord,1,"\"page-view-text\"");
-    index=SearchWordIndex(s->html,index,s->indexrecord,1,":");
+    int index=SearchWordIndex(s->html,0,s->indexrecord,1,"\"css-9xy3gn-Text eu5v0x0\"");
+    index = SearchWordIndex(s->html, 0,index, 1, ":");
+    index++;
+    
     char* view=GetStringSign(s->html,s->indexrecord,index+1,'<');
     printf("VIEW: %s\n",view);
 }
@@ -113,7 +134,7 @@ void ParseProductPage(site* s,stdarray ps,CURL* curl){
     int indexview=0;
     for(int i=0;i<1;i++){
         SetSite(s,curl,pr[i].link);
-        Record(s->html,s->indexrecord);
+        //Record(s->html,s->indexrecord);
         ParseViews(s);
     }
 }
