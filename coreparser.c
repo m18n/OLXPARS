@@ -105,13 +105,13 @@ char** Tok(char* str,char sign,int* rsize){
     }
     int last=0;
     int index=0;
-    char** arr=malloc(tsize);
+    char** arr=malloc(sizeof(char*)*tsize);
     for(int i=0;i<sizestr;i++){
         if(str[i]==sign||i==sizestr-1){
-            int size=i-last+1;
-            char* s=malloc(size);
-            memcpy(s,&str[last],size-1);
-            s[size-1]='\0';
+            int size=i-last;
+            char* s=malloc(size+1);
+            memcpy(s,&str[last],size);
+            s[size]='\0';
             arr[index]=s;
             last=i+1;
             index++;
@@ -145,7 +145,7 @@ char *GetStringSign(char *arr, int sizearr, int startindex, char sign)
     char* text = NULL;
     if (index != 0) {
         int size = index - startindex;
-        text =malloc(size + 1);
+        text = malloc(size + 1);
         memcpy(text, arr + startindex, size);
         text[size] = '\0';
     }

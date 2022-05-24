@@ -87,6 +87,7 @@ timepost ParseTime(site* s,int* index,int count){
     timepost p;
       p.day=0;
     if(done==-1){
+        printf("START %d, END %d, START DIV %d\n", start, end, startdiv);
         time=GetStringSign(s->html,end,start,' ');
         p.day=atoi(time);
     }else{
