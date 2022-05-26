@@ -24,6 +24,18 @@ int SearchWord(char *arr, int size, const char *search)
     }
     return -1;
 }
+void Record(char* arr,int size,const char* namefile){
+    FILE* f;
+    f=fopen(namefile,"w");
+    if (f == NULL) {
+        printf("ERROR RECORD TO FILE\n");
+        return;
+    }
+    printf("SIZE INDEX: %d\n",size);
+    arr[size]='\0';
+    fprintf(f,"%s",arr);
+    fclose(f);
+}
 void ReverChar(const char* arr,char* out){
    
 

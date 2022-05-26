@@ -14,3 +14,4 @@ void ReverChar(const char* arr,char* out);
 char* GetStringSign(char* arr,int sizearr,int startindex,char sign);
 char** Tok(char* str,char sign,int* rsize);
 void Show(char* str,int size);
+void Record(char* arr,int size,const char* namefile);

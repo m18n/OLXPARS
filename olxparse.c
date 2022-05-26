@@ -2,7 +2,7 @@
 void ProcLink(PSsearch* pr){
     if(pr->link==NULL)
         return;
-    const char add[]="https://olx.ua";
+    const char add[]="https://www.olx.ua";
     int sizeadd=strlen(add);
     int sizelink=strlen(pr->link);
     char temp[300];
@@ -91,6 +91,7 @@ timepost ParseTime(site* s,int* index,int count){
         //printf("START %d, END %d, START DIV %d\n", start, end, startdiv);
         time=GetStringSign(s->html,end,start,' ');
         p.day=atoi(time);
+        minutest=p.day*1440;
     }else{
         int space=SearchWordIndex(s->html,done,0,1," ");
         time=GetStringSign(s->html,s->indexrecord,space+1,'<');
@@ -126,9 +127,9 @@ stdarray ParseSearchPage(site* s,olxdata data){
         free(link);
         ProcLink(&p);
         p.price=ParsePrice(s,&indexparse,i);
-        printf("PSEARCH: PRICE[ %d ] LINK[ %s ]\n",p.price,p.link);
+        //printf("PSEARCH: PRICE[ %d ] LINK[ %s ]\n",p.price,p.link);
         timepost time=ParseTime(s,&indexparse,i);
-        printf("TIME DAY: %d, MINUTES: %d\n",time.day,time.minutes);
+        //printf("TIME DAY: %d, MINUTES: %d\n",time.day,time.minutes);
         p.time=time;
         arrp[i]=p;
     }
@@ -137,20 +138,54 @@ stdarray ParseSearchPage(site* s,olxdata data){
     ar.size=data.count;
     return ar;
 }
-int ParseViews(site* s){
+char* ParseId(site* s){
     int index=SearchWordIndex(s->html,0,s->indexrecord,1,"\"css-9xy3gn-Text eu5v0x0\"");
-    index = SearchWordIndex(s->html, 0,index, 1, ":");
+    index = SearchWordIndex(s->html, index,s->indexrecord, 2, ">");
     index++;
-    
-    char* view=GetStringSign(s->html,s->indexrecord,index+1,'<');
-    printf("VIEW: %s\n",view);
+    char* view=GetStringSign(s->html,s->indexrecord,index,'<');
+    return view;
+}
+int GetViews(site* s){
+    int in=SearchWordIndex(s->html,0,s->indexrecord,1,":");
+    in++;
+    char* vi=GetStringSign(s->html,s->indexrecord,in,'}');
+    if(vi==NULL)
+        return -1;
+    int v=atoi(vi);
+    free(vi);
+    return v;
+}
+void ShowPSearch(PSsearch* p){
+    printf("PSEARCH: PRICE[ %d ] LINK[ %s ]\n",p->price,p->link);
+    printf("VIEWS: [ %d ] COF: [ %f ] TIME DAY: %d, MINUTES: %d\n",p->countview,p->cof,p->time.day,p->time.minutes);
 }
 void ParseProductPage(site* s,stdarray ps,CURL* curl){
     PSsearch* pr=ps.array;
     int indexview=0;
-    for(int i=0;i<1;i++){
+    for(int i=0;i<ps.size;i++){
         SetSite(s,curl,pr[i].link);
-        //Record(s->html,s->indexrecord);
-        ParseViews(s);
+        
+        char* id=ParseId(s);
+        if(id==NULL){
+            pr[i].countview=-1;
+            ShowPSearch(&pr[i]);
+            continue;
+        }
+        char buff[200];
+        const char link[]="https://www.olx.ua/api/v1/offers/";
+        int sizelink=strlen(link);
+        strcpy(buff,link);
+        strcpy(&buff[sizelink],id);
+        strcpy(&buff[sizelink+strlen(id)],"/page-views/");
+        free(id);
+        SetSitePost(s,curl,buff,"access_token=904f523592b781f5074904c13645a084eabfd90f");
+        Record(s->html,s->indexrecord,"views.html");
+        int views=GetViews(s);
+        pr[i].countview=views;
+        float cof=(34560-pr[i].time.minutes)/(double)pr[i].countview;
+        pr[i].cof=cof;
+        ShowPSearch(&pr[i]);
+        
+        
     }
 }

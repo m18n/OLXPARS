@@ -17,9 +17,10 @@ typedef struct PSsearch
     int countview;
     char link[300];
     timepost time;
+    float cof;
 }PSsearch;
 
-
+void ShowPSearch(PSsearch* p);
 timepost ParseTime(site* s,int* index,int count);
 int StrTimeToMin(char* str);
 void ProcLink(PSsearch* pr);
@@ -27,4 +28,5 @@ int ParsePrice(site* s,int* index,int count);
 char* ParseLink(site* s,int* index,int count);
 stdarray ParseSearchPage(site* s,olxdata data);
 void ParseProductPage(site* s,stdarray ps,CURL* curl);
-int ParseViews(site* s);
+char* ParseId(site* s);
+int GetViews(site* s);

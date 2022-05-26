@@ -15,4 +15,4 @@ static size_t write_data(void *ptr, size_t size, size_t nmemb, void *data);
 
 site GetSite(CURL* curl,const char* url,int sizebuffer);
 void SetSite(site* s,CURL* curl,const char* url);
-void SetSitePost(site* s,CURL* curl,const char* url);
+void SetSitePost(site* s,CURL* curl,const char* url,const char* postfile);

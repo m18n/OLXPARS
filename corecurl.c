@@ -48,7 +48,7 @@ void SetSite(site* s,CURL* curl,const char* url){
     int end=clock();
     printf("get SITE TIME: %d\n",end-start);
 }
-void SetSitePost(site* s,CURL* curl,const char* url){
+void SetSitePost(site* s,CURL* curl,const char* url,const char* postfile){
     CURLcode res;
     s->indexrecord=0;
     
@@ -56,7 +56,8 @@ void SetSitePost(site* s,CURL* curl,const char* url){
     curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, write_data);
     curl_easy_setopt(curl,CURLOPT_URL,url);
     curl_easy_setopt(curl, CURLOPT_WRITEDATA,s);
-    curl_easy_setopt(curl, CURLOPT_POSTFIELDS, "access_token=4846206661a1b83024b20b1fc1a98df241c609ad");
+    //access_token=4846206661a1b83024b20b1fc1a98df241c609ad
+    curl_easy_setopt(curl, CURLOPT_POSTFIELDS,postfile);
     //curl_easy_setopt(curl, CURLOPT_COOKIE, "access_token=4846206661a1b83024b20b1fc1a98df241c609ad");
     int start=clock();
     res=curl_easy_perform(curl);

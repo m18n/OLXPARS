@@ -11,17 +11,7 @@ olxdata Menu(){
     scanf("%d",&in.count);
     return in;
 }
-void Record(char* arr,int size){
-    FILE* f;
-    f=fopen("test.html","w");
-    if (f == NULL) {
-        printf("ERROR RECORD TO FILE\n");
-        return;
-    }
-    printf("SIZE INDEX: %d\n",size);
-    fprintf(f,"%s",arr);
-    fclose(f);
-}
+
 void Read(site* s){
     FILE* f;
     f=fopen("test.html","r");
@@ -47,9 +37,9 @@ int main(){
    
     site s=GetSite(curl,input.search,100000000);
     //printf("HTML:\n%s\n",s.html);
-    Record(s.html,s.indexrecord);
-    stdarray ar=ParseSearchPage(&s,input);
-    ParseProductPage(&s,ar,curl);
+    Record(s.html,s.indexrecord,"search.html");
+    stdarray products=ParseSearchPage(&s,input);
+    ParseProductPage(&s,products,curl);
     
 
     //Record(s.html,s.indexrecord);
