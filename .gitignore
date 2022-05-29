@@ -1,3 +1,5 @@
 .vs
 build/x64/Debug/*
 out
+view.html
+views.html

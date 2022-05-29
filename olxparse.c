@@ -178,7 +178,7 @@ void ParseProductPage(site* s,stdarray ps,CURL* curl){
         strcpy(&buff[sizelink],id);
         strcpy(&buff[sizelink+strlen(id)],"/page-views/");
         free(id);
-        SetSitePost(s,curl,buff,"access_token=904f523592b781f5074904c13645a084eabfd90f");
+        SetSitePost(s,curl,buff,"access_token=668e88bcc07048328121d9219a01207d25a98ca7");
         Record(s->html,s->indexrecord,"views.html");
         int views=GetViews(s);
         pr[i].countview=views;
