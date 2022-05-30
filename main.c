@@ -35,23 +35,23 @@ int main(){
     // CreateSite(&s,1000000000);
     //Read(&s);
     site s=GetSite(curl,input.search,100000000);
-    for(int i=0;i<1000;i++){
-        //SetSite(&s,curl,input.search);
-        const char id[]="749348372";
-        char buff[200];
-        const char link[]="https://www.olx.ua/api/v1/offers/";
-        int sizelink=strlen(link);
-        strcpy(buff,link);
-        strcpy(&buff[sizelink],id);
-        strcpy(&buff[sizelink+strlen(id)],"/page-views/");
-        //free(id);
-        SetSitePost(&s,curl,buff,"access_token=668e88bcc07048328121d9219a01207d25a98ca7");
-    }
+    // for(int i=0;i<1000;i++){
+    //     //SetSite(&s,curl,input.search);
+    //     const char id[]="749348372";
+    //     char buff[200];
+    //     const char link[]="https://www.olx.ua/api/v1/offers/";
+    //     int sizelink=strlen(link);
+    //     strcpy(buff,link);
+    //     strcpy(&buff[sizelink],id);
+    //     strcpy(&buff[sizelink+strlen(id)],"/page-views/");
+    //     //free(id);
+    //     SetSitePost(&s,curl,buff,"access_token=668e88bcc07048328121d9219a01207d25a98ca7");
+    // }
     // //printf("HTML:\n%s\n",s.html);
     // Record(s.html,s.indexrecord,"search.html");
-    // stdarray products=ParseSearchPage(&s,input);
-    // ParseProductPage(&s,products,curl);
-    
+    stdarray products=ParseSearchPage(&s,input.search);
+    ParseProductPage(&s,products,curl);
+    //ShowPSearch((PSsearch*)products.array);
 
     //Record(s.html,s.indexrecord);
     DeleteSite(&s);

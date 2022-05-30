@@ -26,7 +26,7 @@ int StrTimeToMin(char* str);
 void ProcLink(PSsearch* pr);
 int ParsePrice(site* s,int* index,int count);
 char* ParseLink(site* s,int* index,int count);
-stdarray ParseSearchPage(site* s,olxdata data);
+stdarray ParseSearchPage(site* s,const char* url);
 void ParseProductPage(site* s,stdarray ps,CURL* curl);
 char* ParseId(site* s);
 int GetViews(site* s);

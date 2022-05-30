@@ -27,7 +27,8 @@ int ParsePrice(site* s,int* index,int count){
         printf("ERROR\n");
         Show(&s->html[divprice], 2000);
     }*/
-    char* price=GetStringSign(s->html,end,start,' ');
+    char* price=GetStringSign(s->html,end,start,'г');
+    
     if (price == NULL) {
         printf("DIV PRICE : %d, START DIV: %d, END DIV: %d\n",divprice,start,end);
         printf("ERROR PARSE PRICE\n");
@@ -37,7 +38,10 @@ int ParsePrice(site* s,int* index,int count){
     //printf("STR PRICE:\n");
     //Show(&s->html[start], end-start);
     //printf("PRICE CHAR: %s\n",price);
-
+    int len=strlen(price)-1;
+    price[len-1]='\0';
+    printf("PRICEE: %s\n",price);
+    DeleteSpace(price,strlen(price));
     int inpr=atoi(price);
     free(price);
     *index=end;
@@ -115,10 +119,11 @@ timepost ParseTime(site* s,int* index,int count){
     int a = 10;
     return p;
 }
-stdarray ParseSearchPage(site* s,olxdata data){
+stdarray ParseSearchPage(site* s,const char* url){
     int indexparse=SearchWordIndex(s->html,0,s->indexrecord,1,"<body>");
-    PSsearch* arrp=malloc(sizeof(PSsearch)*data.count);
-    for(int i=0;i<data.count;i++){
+    int count=GetCountWord(s->html,0,s->indexrecord,"\"ad-price\"");
+    PSsearch* arrp=malloc(sizeof(PSsearch)*count);
+    for(int i=0;i<count;i++){
         PSsearch p;
         char*link=ParseLink(s,&indexparse,i);
         if(link==NULL)
@@ -135,7 +140,7 @@ stdarray ParseSearchPage(site* s,olxdata data){
     }
     stdarray ar;
     ar.array=arrp;
-    ar.size=data.count;
+    ar.size=count;
     return ar;
 }
 char* ParseId(site* s){

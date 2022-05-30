@@ -101,6 +101,41 @@ int SearchWordIndex(char *arr, int startindex, int size, int count, const char *
         return -1;
     }
 }
+void DeleteSpace(char* arr,int size){
+    char buffer[100];
+    int c=0;
+    for(int i=0;i<size;i++){
+        if(arr[i]==' '){
+            memcpy(buffer,&arr[i+1],size-i);
+            memcpy(&arr[i],buffer,size-i);
+            c++;
+        }
+    }
+    arr[size-c]='\0';
+}
+int GetCountWord(char* arr,int startindex,int size,const char* search){
+    int len = strlen(search);
+    int c = 0;
+    for (int i = startindex; i < size; i++)
+        {
+            for (int j = i; j < size; j++)
+            {
+                if (arr[j] == search[j - i])
+                {
+                    if (j - i == len - 1)
+                    {
+                        c++;
+                    }
+                }
+                else
+                {
+                    i += j - i;
+                    break;
+                }
+            }
+        }
+    return c;
+}
 void Show(char* str,int size){
     char test=str[size];
     str[size]='\0';

@@ -3,6 +3,6 @@
 void ParseOlxPages(CURL* curl,const char* url){
     int sizeurl=strlen(url);
     site s=GetSite(curl,url,10000000);
-    stdarray products=ParseSearchPage(&s,input);
+    stdarray products=ParseSearchPage(&s,url);
     ParseProductPage(&s,products,curl);
 }
