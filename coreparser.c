@@ -136,6 +136,60 @@ int GetCountWord(char* arr,int startindex,int size,const char* search){
         }
     return c;
 }
+char* GetNumberStr(char* url,int startindex){
+    int size=strlen(url);
+    int end=0;
+    for(int i=startindex;i<size;i++){
+        if(url[i]>=48&&url[i]<=57){
+            end=i+1;
+        }else{
+            break;
+        }
+    }
+    int strsize=end-startindex;
+    char* strnumbers=NULL;
+    if(strsize>0){
+        strnumbers=malloc(strsize+1);
+        memcpy(strnumbers,&url[startindex],strsize);
+        strnumbers[strsize]='\0';
+    }
+    return strnumbers;
+}
+void SetGETArg(char* url,char* res,const char* arg,const char* newval){
+    int sizeurl=strlen(url);
+    int sizearg=strlen(arg);
+    int sizeval=strlen(newval);
+    int indexarg=SearchWordIndex(url,0,sizeurl,1,arg);
+    if(indexarg==-1)
+        return;
+    indexarg+=sizearg;
+    int indexend=SearchWordIndex(url,indexarg,sizeurl,1,"&");
+    char* urlb=url;
+    char ub[400];
+    if(url==res){
+        strcpy(ub,url);
+        urlb=ub;
+    }
+    memcpy(res,url,indexarg);
+    memcpy(&res[indexarg],newval,sizeval);
+    if(indexend!=-1){
+        memcpy(&res[indexarg+sizeval],&urlb[indexend],sizeurl-indexend);
+        res[indexarg+sizeval+sizeurl-indexend]='\0';
+    }
+}
+char* GetGETArg(char* url,const char* arg){
+    int sizeurl=strlen(url);
+    int sizearg=strlen(arg);
+    int indexarg=SearchWordIndex(url,0,sizeurl,1,arg);
+    indexarg+=sizearg;
+    int end=SearchWordIndex(url,indexarg,sizeurl,1,"&");
+    char* arge=NULL;
+    if(end!=-1)
+        arge=GetString(url,indexarg,end-indexarg);
+    else
+        arge=GetString(url,indexarg,sizeurl-indexarg);
+    return arge;
+}
 void Show(char* str,int size){
     char test=str[size];
     str[size]='\0';
@@ -170,8 +224,9 @@ char** Tok(char* str,char sign,int* rsize){
 }
 char *GetString(char *arr, int startindex, int size)
 {
-    char *text = (char *)malloc(size);
+    char *text = (char *)malloc(size+1);
     memcpy(text, arr + startindex, size);
+    text[size]='\0';
     return text;
 }
 char *GetStringSign(char *arr, int sizearr, int startindex, char sign)

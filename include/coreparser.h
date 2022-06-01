@@ -1,6 +1,7 @@
 #pragma once
 #include<stdio.h>
 #include<stdlib.h>
+
 #include<string.h>
 typedef struct stdarray
 {
@@ -17,3 +18,6 @@ void Show(char* str,int size);
 void Record(char* arr,int size,const char* namefile);
 int GetCountWord(char* arr,int startindex,int size,const char* search);
 void DeleteSpace(char* arr,int size);
+char* GetNumberStr(char* url,int startindex);
+void SetGETArg(char* url,char* res,const char* arg,const char* newval);
+char* GetGETArg(char* url,const char* arg);
