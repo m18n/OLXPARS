@@ -1,21 +1,21 @@
 #include"include/corecurl.h"
 void CreateSite(site* s,int maxsize){
-    s->html=(char*)malloc(maxsize);
+    CreateStringInit(&s->html,maxsize);
     s->indexrecord=0;
-    s->size=maxsize;
 }
 void DeleteSite(site* s){
-    free(s->html);
+    DeleteString(&s->html);
+    DeleteString(&s->url);
 }
 static size_t write_data(void *ptr, size_t size, size_t nmemb, void *data)
 {
     site* s=(site*)data;
     size_t realsize = size * nmemb;
-    if(s->size<s->indexrecord){
+    if(s->html.sizearray<s->indexrecord){
         printf("ERROR SIZE\n");
         return 0;
     }else{
-        memcpy(s->html+s->indexrecord,ptr,realsize);
+        memcpy(s->html.chararray+s->indexrecord,ptr,realsize);
         s->indexrecord+=realsize;
     }
   return realsize;
@@ -38,7 +38,7 @@ site GetSite(CURL* curl,const char* url,int sizebuffer){
 void SetSite(site* s,CURL* curl,const char* url){
     CURLcode res;
     s->indexrecord=0;
-    
+    CreateStringCopyConst(&s->url,url);
     curl=curl_easy_init();
     curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, write_data);
     curl_easy_setopt(curl,CURLOPT_URL,url);
@@ -51,7 +51,7 @@ void SetSite(site* s,CURL* curl,const char* url){
 void SetSitePost(site* s,CURL* curl,const char* url,const char* postfile){
     CURLcode res;
     s->indexrecord=0;
-    
+    CreateStringCopyConst(&s->url,url);
     curl=curl_easy_init();
     curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, write_data);
     curl_easy_setopt(curl,CURLOPT_URL,url);

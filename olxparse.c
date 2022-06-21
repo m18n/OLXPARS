@@ -47,34 +47,33 @@ int ParsePrice(site* s,int* index,int count){
     *index=end;
     return inpr;
 }
-int StrTimeToMin(char* str){
+int StrTimeToMin(string str){
     int sizearr = 0;
-    char** arr=Tok(str,':',&sizearr);
-    char* h=arr[0];
-    char* min=arr[1];
-    int ih=atoi(h);
-    int imin=atoi(min);
+    string* arr=Tok(str,':',&sizearr);
+    string h=arr[0];
+    string min=arr[1];
+    int ih=atoi(h.chararray);
+    int imin=atoi(min.chararray);
     imin+=ih*60;
     for (int i = 0; i < sizearr; i++) {
-        free(arr[i]);
+        DeleteString(&arr[i]);
     }
-    
     //printf("HOURSE: %s, MINUTES: %s\n",h,min);
     return imin;
 }
-char* ParseLink(site* s,int* index,int count){
-    int divstart=SearchWordIndex(s->html,*index,s->indexrecord,1,"\"css-1bbgabe\"");
+string ParseLink(site* s,int* index,int count){
+    int divstart=s->html.SearchWordIndex(&s->html,*index,s->indexrecord,1,"\"css-1bbgabe\"");
     if(divstart==-1)
-        return NULL;
+        return;
     //Show(&s->html[divstart],120);
-    int href=SearchWordIndex(s->html,divstart,s->indexrecord,1,"href=\"");
+    int href=s->html.SearchWordIndex(&s->html,divstart,s->indexrecord,1,"href=\"");
     href+=6;
-    char* link=GetStringSign(s->html,s->indexrecord,href,'\"');
+    string link=s->html.GetStringSign(&s->html,href,'\"');
     *index=href;
     return link;
 }
 timepost ParseTime(site* s,int* index,int count){
-    int startdiv=SearchWordIndex(s->html,*index,s->indexrecord,1,"\"location-date\"");
+    int startdiv=s->html.SearchWordIndex(&s->html,*index,s->indexrecord,1,"\"location-date\"");
     if(startdiv==-1)
     {
         timepost t;
@@ -82,23 +81,23 @@ timepost ParseTime(site* s,int* index,int count){
         t.minutes=-1;
         return t;
     }
-    int start=SearchWordIndex(s->html,startdiv,s->indexrecord,3,">");
+    int start=s->html.SearchWordIndex(&s->html,startdiv,s->indexrecord,3,">");
     start++;
-    int end=SearchWordIndex(s->html,start,s->indexrecord,1,"</p>");
+    int end=s->html.SearchWordIndex(&s->html,start,s->indexrecord,1,"</p>");
     //Show(s->html+start,120);
-    int done=SearchWordIndex(s->html,start,end,1,":");
+    int done=s->html.SearchWordIndex(&s->html,start,end,1,":");
     int minutest=0;
-    char* time=NULL;
+    string time;
     timepost p;
       p.day=0;
     if(done==-1){
         //printf("START %d, END %d, START DIV %d\n", start, end, startdiv);
-        time=GetStringSign(s->html,end,start,' ');
-        p.day=atoi(time);
+        time=s->html.GetStringSignEnd(&s->html,start,end,' ');
+        p.day=atoi(time.chararray);
         minutest=p.day*1440;
     }else{
-        int space=SearchWordIndex(s->html,done,0,1," ");
-        time=GetStringSign(s->html,s->indexrecord,space+1,'<');
+        int space=s->html.SearchWordIndex(&s->html,done,0,1," ");
+        time=s->html.GetStringSign(&s->html,space+1,'<');
         // printf("START SHOW:\n");
         // Show(&s->html[start],100);
         // printf("END SHOW:\n");
@@ -115,18 +114,18 @@ timepost ParseTime(site* s,int* index,int count){
 
        // printf("PARSE TIME: %s\n",time);
     
-    free(time);
+    DeleteString(&time);
     int a = 10;
     return p;
 }
 stdarray ParseSearchPage(site* s,const char* url){
-    int indexparse=SearchWordIndex(s->html,0,s->indexrecord,1,"<body>");
-    int count=GetCountWord(s->html,0,s->indexrecord,"\"css-1bbgabe\"");
+    int indexparse=s->html.SearchWordIndex(&s->html,0,s->indexrecord,1,"<body>");
+    int count=s->html.GetCountWord(&s->html,0,"\"css-1bbgabe\"");
     PSsearch* arrp=malloc(sizeof(PSsearch)*count);
     for(int i=0;i<count;i++){
         PSsearch p;
-        char*link=ParseLink(s,&indexparse,i);
-        if(link==NULL)
+        string link=ParseLink(s,&indexparse,i);
+        if(link.chararray==NULL)
             break;
         strcpy(p.link,link);
         free(link);
@@ -143,21 +142,21 @@ stdarray ParseSearchPage(site* s,const char* url){
     ar.size=count;
     return ar;
 }
-char* ParseId(site* s){
+string ParseId(site* s){
     int index=SearchWordIndex(s->html,0,s->indexrecord,1,"\"css-9xy3gn-Text eu5v0x0\"");
-    index = SearchWordIndex(s->html, index,s->indexrecord, 2, ">");
+    index = s->html.SearchWordIndex(&s->html, index,s->indexrecord, 2, ">");
     index++;
-    char* view=GetStringSign(s->html,s->indexrecord,index,'<');
+    string view=s->html.GetStringSign(&s->html,index,'<');
     return view;
 }
 int GetViews(site* s){
-    int in=SearchWordIndex(s->html,0,s->indexrecord,1,":");
+    int in= s->html.SearchWordIndex(&s->html,0,s->indexrecord,1,":");
     in++;
-    char* vi=GetStringSign(s->html,s->indexrecord,in,'}');
-    if(vi==NULL)
+    string vi=s->html.GetStringSign(&s->html,in,'}');
+    if(vi.chararray==NULL)
         return -1;
-    int v=atoi(vi);
-    free(vi);
+    int v=atoi(vi.chararray);
+    DeleteString(&vi);
     return v;
 }
 void ShowPSearch(PSsearch* p){
@@ -195,21 +194,21 @@ void ParseProductPage(site* s,stdarray ps,CURL* curl){
     }
 }
 int GetCountPage(site* s){
-    int c=GetCountWord(s->html,0,s->indexrecord,"\"css-1mi714g\"");
-    int end=SearchWordIndex(s->html,0,s->indexrecord,c,"\"css-1mi714g\"");
-    end=SearchWordIndex(s->html,end,s->indexrecord,1,">");
+    int c=s->html.GetCountWord(&s->html,0,"\"css-1mi714g\"");
+    int end=s->html.SearchWordIndex(&s->html,0,s->indexrecord,c,"\"css-1mi714g\"");
+    end=s->html.SearchWordIndex(&s->html,end,s->indexrecord,1,">");
     end++;
     int pages=0;
-    char* page=GetStringSign(s->html,s->indexrecord,end,'<');
+    string page=s->html.GetStringSign(&s->html,end,'<');
    
-    pages=atoi(page);
-    free(page);
+    pages=atoi(page.chararray);
+    DeleteString(&page);
     printf("COUNT PAGE: %d\n",pages);
     if(pages==0)
         return 1;
     return pages;
 }
-void NextPage(char* url,char* result){
+void NextPage(string url,char* result){
     char*arg=GetGETArg(url,"page=");
     int page=atoi(arg);
     page++;

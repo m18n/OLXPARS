@@ -3,11 +3,12 @@
 #include<string.h>
 #include<stdio.h>
 #include<stdlib.h>
+#include"coreparser.h"
 typedef struct site
 {
-    char* html;
+    string html;
     int indexrecord;
-    int size;
+    string url;
 }site;
 void CreateSite(site* s,int maxsize);
 void DeleteSite(site* s);
