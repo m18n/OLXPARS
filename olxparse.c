@@ -27,7 +27,8 @@ int ParsePrice(site* s,int* index,int count){
         printf("ERROR\n");
         Show(&s->html[divprice], 2000);
     }*/
-    char* price=GetStringSign(s->html,end,start,' ');
+    char* price=GetStringSign(s->html,end,start,'г');
+    
     if (price == NULL) {
         printf("DIV PRICE : %d, START DIV: %d, END DIV: %d\n",divprice,start,end);
         printf("ERROR PARSE PRICE\n");
@@ -37,7 +38,10 @@ int ParsePrice(site* s,int* index,int count){
     //printf("STR PRICE:\n");
     //Show(&s->html[start], end-start);
     //printf("PRICE CHAR: %s\n",price);
-
+    int len=strlen(price)-1;
+    price[len-1]='\0';
+    //printf("PRICEE: %s\n",price);
+    DeleteSpace(price,strlen(price));
     int inpr=atoi(price);
     free(price);
     *index=end;
@@ -115,10 +119,11 @@ timepost ParseTime(site* s,int* index,int count){
     int a = 10;
     return p;
 }
-stdarray ParseSearchPage(site* s,olxdata data){
+stdarray ParseSearchPage(site* s,const char* url){
     int indexparse=SearchWordIndex(s->html,0,s->indexrecord,1,"<body>");
-    PSsearch* arrp=malloc(sizeof(PSsearch)*data.count);
-    for(int i=0;i<data.count;i++){
+    int count=GetCountWord(s->html,0,s->indexrecord,"\"css-1bbgabe\"");
+    PSsearch* arrp=malloc(sizeof(PSsearch)*count);
+    for(int i=0;i<count;i++){
         PSsearch p;
         char*link=ParseLink(s,&indexparse,i);
         if(link==NULL)
@@ -135,7 +140,7 @@ stdarray ParseSearchPage(site* s,olxdata data){
     }
     stdarray ar;
     ar.array=arrp;
-    ar.size=data.count;
+    ar.size=count;
     return ar;
 }
 char* ParseId(site* s){
@@ -178,7 +183,7 @@ void ParseProductPage(site* s,stdarray ps,CURL* curl){
         strcpy(&buff[sizelink],id);
         strcpy(&buff[sizelink+strlen(id)],"/page-views/");
         free(id);
-        SetSitePost(s,curl,buff,"access_token=904f523592b781f5074904c13645a084eabfd90f");
+        SetSitePost(s,curl,buff,"access_token=fbe921f88fcfef8f26c2e23fcd8611b290311666");
         Record(s->html,s->indexrecord,"views.html");
         int views=GetViews(s);
         pr[i].countview=views;
@@ -188,4 +193,51 @@ void ParseProductPage(site* s,stdarray ps,CURL* curl){
         
         
     }
+}
+int GetCountPage(site* s){
+    int c=GetCountWord(s->html,0,s->indexrecord,"\"css-1mi714g\"");
+    int end=SearchWordIndex(s->html,0,s->indexrecord,c,"\"css-1mi714g\"");
+    end=SearchWordIndex(s->html,end,s->indexrecord,1,">");
+    end++;
+    int pages=0;
+    char* page=GetStringSign(s->html,s->indexrecord,end,'<');
+   
+    pages=atoi(page);
+    free(page);
+    printf("COUNT PAGE: %d\n",pages);
+    if(pages==0)
+        return 1;
+    return pages;
+}
+void NextPage(char* url,char* result){
+    char*arg=GetGETArg(url,"page=");
+    int page=atoi(arg);
+    page++;
+    free(arg);
+    char buff[200];
+    snprintf(buff,200,"%d",page);
+    SetGETArg(url,result,"page=",buff);
+}
+int GetPage(char* url){
+    char*arg=GetGETArg(url,"page=");
+    int page=atoi(arg);
+    free(arg);
+    return page;
+}
+void SetPage(char* url,int page){
+    char buff[200];
+    snprintf(buff,200,"%d",page);
+    SetGETArg(url,url,"page=",buff);
+}
+void NewMaxPrice(char* url,int price){
+    
+    char buff[200];
+    snprintf(buff,200,"%d",price);
+    SetGETArg(url,url,"3Ato%5D=",buff);
+}
+void NewMinPrice(char* url,int price){
+    
+    char buff[200];
+    snprintf(buff,200,"%d",price);
+    SetGETArg(url,url,"3Afrom%5D=",buff);
 }
