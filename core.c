@@ -1,4 +1,4 @@
-#include "include/coreparser.h"
+#include "include/core.h"
 int SearchWord(string* self,const char* search)
 {
     int len = strlen(search);
@@ -54,18 +54,18 @@ int SearchWordIndex(string* self,int startindex,int size,int count,const char* s
     
     if (startindex > size)
     {
-        char s[100];
         string revers;
-        CreateStringCopy(&revers,search,len);
+        CreateStringCopyConst(&revers,search);
         revers.ReversString(&revers);
         for (int i = startindex; i >= size; i--)
         {
             for (int j = i; j >= size; j--)
             {
-                if (self->chararray[j] == s[i-j])
+                if (self->chararray[j] == revers.chararray[i-j])
                 {
                     if (i-j == len - 1)
                     {
+                        
                         c++;
                         if (c == count)
                             return i;
@@ -106,15 +106,16 @@ int SearchWordIndex(string* self,int startindex,int size,int count,const char* s
 }
 void DeleteSymbol(string* self,char symbol){
     char buffer[100];
-    int c=0;
+    
     for(int i=0;i<self->length;i++){
+        char test=self->chararray[i];
         if(self->chararray[i]==symbol){
-            memcpy(buffer,&self->chararray[i+1],self->length-i);
-            memcpy(&self->chararray[i],buffer,self->length-i);
-            c++;
+            int sizecopy=self->length-i;
+            memcpy(&self->chararray[i],&self->chararray[i+1],sizecopy);
+            self->length--;
         }
     }
-    self->chararray[self->length-c]='\0';
+    self->chararray[self->length]='\0';
 }
 
 int GetCountWord(string* self,int startindex,const char* search){
@@ -200,7 +201,7 @@ void Show(char* str,int size){
     str[size]=test;
 }
 void ShowString(string* self){
-    printf("%s SIZE: %d",self->chararray,self->sizearray);
+    printf("%s SIZE: %d LENGTH: %d\n",self->chararray,self->sizearray,self->length);
 }
 string* Tok(string str,char sign,int* rsize){
     int tsize=1;
@@ -237,7 +238,7 @@ string GetString(string* self,int startindex,int length)
     text[length]='\0';
     string str;
     CreateString(&str);
-    str.SetCharArray(&str,text);
+    str.SetRefArray(&str,text);
     return str;
 }
 string GetStringSign(string* self,int startindex,char sign)
@@ -257,15 +258,17 @@ string GetStringSign(string* self,int startindex,char sign)
     }
     char* text = NULL;
     int size=0;
+    string str;
+    CreateString(&str);
     if (index != 0) {
         size = index - startindex;
         text = malloc(size + 1);
         memcpy(text, self->chararray + startindex, size);
         text[size] = '\0';
+        str.SetRefArray(&str,text);
     }
-    string str;
-    CreateString(&str);
-    str.SetCharArray(&str,text);
+    
+    
     return str;
 }
 string GetStringSignEnd(string* self,int startindex,int endindex,char sign){
@@ -284,28 +287,39 @@ string GetStringSignEnd(string* self,int startindex,int endindex,char sign){
     }
     char* text = NULL;
     int size=0;
+    string str;
+    CreateString(&str);
     if (index != 0) {
-        size = index - startindex;
+        size = index - startindex-2;
         text = malloc(size + 1);
         memcpy(text, self->chararray + startindex, size);
         text[size] = '\0';
+        str.SetRefArray(&str,text);
     }
-    string str;
-    CreateString(&str);
-    str.SetCharArray(&str,text);
+    
+    
     return str;
 }
-void SetCharArray(struct string* self,char* chararray){
+void SetRefArray(struct string* self,char* chararray){
     self->chararray=chararray;
     self->sizearray=strlen(chararray);
     self->length=self->sizearray;
 }
 void SetConstCharArray(struct string* self,const char* arr){
-    int length=strlen(arr);
-    self->chararray=malloc(length);
-    self->sizearray=length;
-    self->length=length;
-    memcpy(self->chararray,arr,length);
+    int sizebuffer=strlen(arr);
+    if(self->sizearray>=sizebuffer){
+        memcpy(self->chararray,arr,sizebuffer);
+        self->length=sizebuffer;
+        self->chararray[sizebuffer]='\0';
+    }else{
+        if(self->sizearray!=0)
+            free(self->chararray);
+        self->chararray=malloc(sizebuffer);
+        memcpy(self->chararray,arr,sizebuffer);
+        self->chararray[sizebuffer]='\0';
+        self->length=sizebuffer;
+        self->sizearray=sizebuffer;
+    }
 }
 void AddChar(struct string* self,const char* arr){
     int length=strlen(arr);
@@ -313,11 +327,13 @@ void AddChar(struct string* self,const char* arr){
     if(clearmemory>=length){
         memcpy(&self->chararray[self->length],arr,length);
         self->length+=length;
+        self->chararray[self->length]='\0';
     }else{
         int size=self->sizearray+(length-clearmemory);
         char* newstr=malloc(size);
         memcpy(newstr,self->chararray,self->length);
         memcpy(&newstr[self->length],arr,length);
+        newstr[self->length+length]='\0';
         free(self->chararray);
         self->chararray=newstr;
         self->length=size;
@@ -337,7 +353,7 @@ void ResizeString(struct string* self,int newsize){
         self->sizearray=newsize;
     }
 }
-void CopyCharArray(struct string* self,char* chararray,int sizebuffer){
+void SetCharArray(struct string* self,char* chararray,int sizebuffer){
     if(self->sizearray>=sizebuffer){
         memcpy(self->chararray,chararray,sizebuffer);
         self->length=strlen(chararray);
@@ -347,10 +363,12 @@ void CopyCharArray(struct string* self,char* chararray,int sizebuffer){
         self->chararray=malloc(sizebuffer);
         memcpy(self->chararray,chararray,sizebuffer);
         self->length=strlen(chararray);
+        self->sizearray=sizebuffer;
     }
 }
 void CreateString(string* self){
     self->chararray=NULL;
+    self->length=0;
     self->sizearray=0;
     self->SearchWord=SearchWord;
     self->SearchWordIndex=SearchWordIndex;
@@ -361,8 +379,8 @@ void CreateString(string* self){
     self->Show=ShowString;
     self->GetCountWord=GetCountWord;
     self->DeleteSymbol=DeleteSymbol;
-    self->CopyCharArray=CopyCharArray;
     self->SetCharArray=SetCharArray;
+    self->SetRefArray=SetRefArray;
     self->SetConstCharArray=SetConstCharArray;
     self->Add=AddChar;
     self->Resize=ResizeString;
@@ -375,16 +393,41 @@ void StringMove(string* self,string* two){
 }
 void CreateStringInit(string* self,int sizearray){
     CreateString(self);
-    self->chararray=malloc(sizearray);
+    self->Resize(self,sizearray);
 }
 void CreateStringCopy(string* self,char* array,int sizebuffer){
     CreateString(self);
-    self->CopyCharArray(self,array,sizebuffer);
+    self->SetCharArray(self,array,sizebuffer);
 }
 void CreateStringCopyConst(string* self,const char* array){
     CreateString(self);
-    self->CopyCharArray(self,array,strlen(array));
+    self->SetCharArray(self,array,strlen(array)+1);
 }
 void DeleteString(string* self){
-    free(self->chararray);
+    if(self->chararray!=NULL)
+        free(self->chararray);
+}
+void ShowInfoProduct(InfoProduct_t* info){
+    printf("NAME: %s PRICE: %d DESCRIPT: %s URL: %s\n",info->name.chararray,info->price,info->descript.chararray,info->url.chararray);
+}
+int GetMinutesBack(time_t* self){
+
+}
+
+void CreateTime(coretime_t* self){
+    self->day=0;
+    self->hourse=0;
+    self->minutes=0;
+    self->month=0;
+    self->year=0;
+    self->GetMinutesBack=GetMinutesBack;
+}
+
+void CreateInfoProduct(InfoProduct_t* self){
+    CreateTime(&self->time_create);
+    CreateString(&self->descript);
+    CreateString(&self->name);
+    CreateString(&self->url);
+    self->price=0;
+    self->Show=ShowInfoProduct;
 }

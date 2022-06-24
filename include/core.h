@@ -20,9 +20,9 @@ typedef struct string{
     void(*Show)(struct string*self);
     int(*GetCountWord)(struct string* self,int startindex,const char* word);
     void(*DeleteSymbol)(struct string* self,char symbol);
-    void (*SetCharArray)(struct string* self,char* chararray);
+    void (*SetRefArray)(struct string* self,char* chararray);
     void (*SetConstCharArray)(struct string*self,const char* arr);
-    void (*CopyCharArray)(struct string* self,char* chararray,int sizebuffer);
+    void (*SetCharArray)(struct string* self,char* chararray,int sizebuffer);
     void (*Add)(struct string* self,const char* arr);
     void (*Resize)(struct string* self,int newsize);
     char* chararray;
@@ -31,7 +31,7 @@ typedef struct string{
 }string;
 void ResizeString(struct string* self,int newsize);
 void AddChar(struct string* self,const char* arr);
-void SetCharArray(struct string* self,char* chararray);
+void SetRefArray(struct string* self,char* chararray);
 void SetConstCharArray(struct string* self,const char* arr);
 void CopyCharArray(struct string* self,char* chararray,int sizebuffer);
 int SearchWord(string* self,const char* search);
@@ -55,3 +55,22 @@ void CreateStringCopy(string* self,char* array,int sizebuffer);
 void StringMove(string* self,string* two);
 void CreateStringCopyConst(string* self,const char* array);
 void DeleteString(string* self);
+typedef struct time{
+    int day;
+    int month;
+    int year;
+    int hourse;
+    int minutes;
+    int(*GetMinutesBack)(struct time* time);
+}coretime_t;
+void CreateTime(coretime_t* self);
+typedef struct InfoProduct{
+    int price;
+    string name;
+    string descript;
+    coretime_t time_create;
+    string url;
+    void(*Show)(struct InfoProduct* info);
+}InfoProduct_t;
+void ShowInfoProduct(InfoProduct_t* info);
+void CreateInfoProduct(InfoProduct_t* self);

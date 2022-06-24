@@ -1,4 +1,112 @@
 #include"include/olxparse.h"
+void ParseProduct(IParseInfoProduct_t* self,InfoProduct_t* info,site* s){
+    if(self->ParseLink!=NULL)
+        self->ParseLink(self,info,s);
+    if(self->ParsePrice!=NULL)
+        self->ParsePrice(self,info,s);
+    if(self->ParseDescript!=NULL)
+        self->ParseDescript(self,info,s);
+    if(self->ParseTime!=NULL)
+        self->ParseTime(self,info,s);
+    if(self->ParseNameProduct!=NULL)
+        self->ParseNameProduct(self,info,s);
+    
+    
+    
+}
+void CreateIParseInfoProduct(IParseInfoProduct_t* iparse){
+    iparse->ParseDescript=NULL;
+    iparse->ParseNameProduct=NULL;
+    iparse->ParsePrice=NULL;
+    iparse->ParseProduct=ParseProduct;
+    iparse->ParseTime=NULL;
+    iparse->ParseLink=NULL;
+    iparse->start=0;
+    iparse->end=0;
+}
+void ParseSearchLink(IParseInfoProduct_t* self,InfoProduct_t* info,site* s){
+    int divstart=s->html.SearchWordIndex(&s->html,self->start,self->end,1,"\"css-1bbgabe\"");
+    if(divstart==-1)
+        return;
+    //Show(&s->html[divstart],120);
+    int href=s->html.SearchWordIndex(&s->html,divstart,self->end,1,"href=\"");
+    href+=6;
+    string link=s->html.GetStringSign(&s->html,href,'\"');
+    self->start=href;
+    info->url=link;
+}
+void ParseSearchPrice(IParseInfoProduct_t* self,InfoProduct_t* info,site* s){
+    int in=self->start;
+    int divprice=s->html.SearchWordIndex(&s->html,in,self->end,1,"\"ad-price\"");
+    if(divprice==-1){
+        return -1;
+    }
+    int end = s->html.SearchWordIndex(&s->html, divprice,self->end, 1, ".<");
+    if(end==-1){
+        self->start=divprice;
+        info->price=-1;
+        return;
+    }
+    //printf("END:\n");
+    //Show(&s->html[end-10],10);
+    int start=s->html.SearchWordIndex(&s->html,end,0,1,">");
+    start++;
+    /*if (end == start) {
+        printf("ERROR\n");
+        Show(&s->html[divprice], 2000);
+    }*/
+    string price=s->html.GetStringSignEnd(&s->html,start,end,'г');
+    
+    if (price.chararray == NULL) {
+        printf("DIV PRICE : %d, START DIV: %d, END DIV: %d\n",divprice,start,end);
+        printf("ERROR PARSE PRICE\n");
+        return -2;
+    }
+    //printf("SIZE INDEX: %d\n",s->indexrecord);
+    //printf("STR PRICE:\n");
+    //Show(&s->html[start], end-start);
+    //printf("PRICE CHAR: %s\n",price);
+    
+    //printf("PRICEE: %s\n",price);
+    price.DeleteSymbol(&price,' ');
+    int inpr=atoi(price.chararray);
+    
+    DeleteString(&price);
+    self->start=end;
+    info->price=inpr;
+    
+
+}
+stdarray ParseAllProduct(OlxSearchSite_t* olx){
+    int indexparse=olx->site->html.SearchWordIndex(&olx->site->html,0,olx->site->indexrecord,1,"<body>");
+    int count=olx->site->html.GetCountWord(&olx->site->html,0,"\"l-card\"");
+    olx->iparse.start=indexparse;
+    InfoProduct_t* arrp=malloc(sizeof(InfoProduct_t)*count);
+    for(int i=0;i<count;i++){
+        InfoProduct_t p;
+        CreateInfoProduct(&p);
+        
+        olx->iparse.end=olx->site->html.SearchWordIndex(&olx->site->html,olx->iparse.start,olx->site->indexrecord,2,"\"l-card\"");
+        if(olx->iparse.end==-1)
+            olx->iparse.end=olx->site->indexrecord;
+        olx->iparse.ParseProduct(&olx->iparse,&p,olx->site);
+        
+        printf("INDEX: %d ",i);
+        p.Show(&p);
+        arrp[i]=p;
+    }
+    stdarray ar;
+    ar.array=arrp;
+    ar.size=count;
+    return ar;
+}
+void CreateOlxSearchSite(OlxSearchSite_t* olx,site* site){
+    CreateIParseInfoProduct(&olx->iparse);
+    olx->iparse.ParseLink=ParseSearchLink;
+    olx->iparse.ParsePrice=ParseSearchPrice;
+    olx->ParseAllProduct=ParseAllProduct;
+    olx->site=site;
+}
 // void ProcLink(PSsearch* pr){
 //     if(pr->link.chararray==NULL)
 //         return;
