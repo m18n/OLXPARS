@@ -3,16 +3,17 @@
 #include<string.h>
 #include<stdio.h>
 #include<stdlib.h>
+#include"core.h"
 typedef struct site
 {
-    char* html;
+    string html;
     int indexrecord;
-    int size;
+    string url;
 }site;
 void CreateSite(site* s,int maxsize);
 void DeleteSite(site* s);
 static size_t write_data(void *ptr, size_t size, size_t nmemb, void *data);
 
-site GetSite(CURL* curl,const char* url,int sizebuffer);
-void SetSite(site* s,CURL* curl,const char* url);
-void SetSitePost(site* s,CURL* curl,const char* url,const char* postfile);
+site DownloadSite(CURL* curl,const char* url,int maxsize);
+void DownloadSitePtr(site* s,CURL* curl,const char* url);
+void DownloadSitePtrPOST(site* s,CURL* curl,const char* url,const char* postfile);
