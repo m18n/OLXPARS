@@ -1,6 +1,8 @@
 #pragma once
 #include"core.h"
 #include"corecurl.h"
+void SetPageUrl(string* url,int newpage);
+int GetCountPageUrl(site* site);
 typedef struct IParseInfoProduct{
     void(*ParsePrice)(struct IParseInfoProduct* self,InfoProduct_t * info,site* s);
     void(*ParseNameProduct)(struct IParseInfoProduct* self,InfoProduct_t * info,site* s);
@@ -17,11 +19,21 @@ typedef struct OlxSearchSite{
     IParseInfoProduct_t iparse;
     stdarray(*ParseAllProduct)(struct OlxSearchSite* olx);
     site* site;
+    int countpage;
 }OlxSearchSite_t;
 void ParseSearchLink(IParseInfoProduct_t* self,InfoProduct_t* info,site* s);
 void ParseSearchPrice(IParseInfoProduct_t* self,InfoProduct_t* info,site* s);
+void ParseNameProduct(IParseInfoProduct_t* self,InfoProduct_t* info,site* s);
 stdarray ParseAllProduct(OlxSearchSite_t* olx);
 void CreateOlxSearchSite(OlxSearchSite_t* olx,site* site);
+typedef struct OlxAnalizSearch{
+    stdarray olxsearchsites;
+    string url;
+    void(*AnalizSearch)(struct OlxAnalizsearch* self);
+}OlxAnalizSearch_t;
+void AnalizSearch(OlxAnalizSearch_t* self);
+void CreateOlxAnalizSearch(OlxAnalizSearch_t* olx,string url);
+void DeleteOlxAnalizSearch(OlxAnalizSearch_t* olx);
 // typedef struct olxdata
 // {
 //     char search[200];

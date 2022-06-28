@@ -1,4 +1,5 @@
 #include "include/core.h"
+
 int SearchWord(string* self,const char* search)
 {
     int len = strlen(search);
@@ -290,10 +291,11 @@ string GetStringSignEnd(string* self,int startindex,int endindex,char sign){
     string str;
     CreateString(&str);
     if (index != 0) {
-        size = index - startindex-2;
+        size = index - startindex;
         text = malloc(size + 1);
         memcpy(text, self->chararray + startindex, size);
         text[size] = '\0';
+        
         str.SetRefArray(&str,text);
     }
     
@@ -366,6 +368,27 @@ void SetCharArray(struct string* self,char* chararray,int sizebuffer){
         self->sizearray=sizebuffer;
     }
 }
+string Copy(struct string* self){
+    string str=*self;
+    str.chararray=malloc(self->sizearray);
+    memcpy(str.chararray,self->chararray,self->sizearray);
+    return str; 
+}
+string IntToStr(int num){
+    char buff[200];
+    snprintf(buff,200,"%d",num);
+    string str;
+    CreateStringCopy(&str,buff,strlen(buff));
+    return str;
+}
+void AddString(struct string* self,struct string str){
+    AddChar(self,str.chararray);
+}
+void AddInt(struct string* self,int num){
+    char buff[200];
+    snprintf(buff,200,"%d",num);
+    self->Add(&self,buff);
+}
 void CreateString(string* self){
     self->chararray=NULL;
     self->length=0;
@@ -383,7 +406,11 @@ void CreateString(string* self){
     self->SetRefArray=SetRefArray;
     self->SetConstCharArray=SetConstCharArray;
     self->Add=AddChar;
+    self->AddInt=AddInt;
+    self->AddString=AddString;
     self->Resize=ResizeString;
+    self->Copy=Copy;
+    self->ToStr=IntToStr;
 }
 void StringMove(string* self,string* two){
     *self=*two;

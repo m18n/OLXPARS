@@ -24,11 +24,17 @@ typedef struct string{
     void (*SetConstCharArray)(struct string*self,const char* arr);
     void (*SetCharArray)(struct string* self,char* chararray,int sizebuffer);
     void (*Add)(struct string* self,const char* arr);
+    void (*AddInt)(struct string* self,int num);
+    void (*AddString)(struct string* self,struct string str);
     void (*Resize)(struct string* self,int newsize);
+    struct string (*ToStr)(int num);
+    struct string(*Copy)(struct string* self);
     char* chararray;
     int sizearray;
     int length;
 }string;
+void AddString(struct string* self,struct string str);
+string Copy(struct string* self);
 void ResizeString(struct string* self,int newsize);
 void AddChar(struct string* self,const char* arr);
 void SetRefArray(struct string* self,char* chararray);
@@ -48,6 +54,7 @@ void DeleteSymbol(string* self,char symbol);
 char* GetNumberStr(char* url,int startindex);
 void SetGETArg(char* url,char* res,const char* arg,const char* newval);
 string GetGETArg(string url,string arg);
+string IntToStr(int num);
 void Show(char* str,int size);
 void CreateString(string* self);
 void CreateStringInit(string* self,int sizearray);
@@ -55,6 +62,7 @@ void CreateStringCopy(string* self,char* array,int sizebuffer);
 void StringMove(string* self,string* two);
 void CreateStringCopyConst(string* self,const char* array);
 void DeleteString(string* self);
+
 typedef struct time{
     int day;
     int month;

@@ -1,4 +1,28 @@
 #include"include/olxparse.h"
+
+void SetPageUrl(string* url,int newpage){
+    int page=url->SearchWordIndex(url,0,url->length,1,"page=");
+    if(page==-1){
+
+        url->Add(&url,"page=");
+        url->AddInt(&url,newpage);
+        
+    }else{
+        page+=5;
+        url->length=page;
+        url->AddInt(&url,newpage);
+    }
+}
+int GetCountPageUrl(site* site){
+    int getblock=site->html.GetCountWord(&site->html,0,"\"css-1mi714g\"");
+    int index=site->html.SearchWordIndex(&site->html,0,site->indexrecord,getblock,"\"css-1mi714g\"");
+    index=site->html.SearchWordIndex(&site->html,index,site->indexrecord,1,">");
+    index++;
+    string str=site->html.GetStringSignEnd(&site->html,index,site->indexrecord,'<');
+    int count=atoi(str.chararray);
+    DeleteString(&str);
+    return count;
+}
 void ParseProduct(IParseInfoProduct_t* self,InfoProduct_t* info,site* s){
     if(self->ParseLink!=NULL)
         self->ParseLink(self,info,s);
@@ -32,7 +56,6 @@ void ParseSearchLink(IParseInfoProduct_t* self,InfoProduct_t* info,site* s){
     int href=s->html.SearchWordIndex(&s->html,divstart,self->end,1,"href=\"");
     href+=6;
     string link=s->html.GetStringSign(&s->html,href,'\"');
-    self->start=href;
     info->url=link;
 }
 void ParseSearchPrice(IParseInfoProduct_t* self,InfoProduct_t* info,site* s){
@@ -72,20 +95,27 @@ void ParseSearchPrice(IParseInfoProduct_t* self,InfoProduct_t* info,site* s){
     int inpr=atoi(price.chararray);
     
     DeleteString(&price);
-    self->start=end;
+    
     info->price=inpr;
     
 
 }
+void ParseNameProduct(IParseInfoProduct_t* self,InfoProduct_t* info,site* s){
+    int index=s->html.SearchWordIndex(&s->html,self->start,self->end,1,"css-v3vynn-Text eu5v0x0");
+    index+=25;
+    string name=s->html.GetStringSignEnd(&s->html,index,self->end,'<');
+    info->name=name;
+}
 stdarray ParseAllProduct(OlxSearchSite_t* olx){
+    printf("COUNT PAGE: %d\n",olx->countpage);
     int indexparse=olx->site->html.SearchWordIndex(&olx->site->html,0,olx->site->indexrecord,1,"<body>");
     int count=olx->site->html.GetCountWord(&olx->site->html,0,"\"l-card\"");
-    olx->iparse.start=indexparse;
+    olx->iparse.end=olx->site->html.SearchWordIndex(&olx->site->html,indexparse,olx->site->indexrecord,1,"\"l-card\"");
     InfoProduct_t* arrp=malloc(sizeof(InfoProduct_t)*count);
     for(int i=0;i<count;i++){
         InfoProduct_t p;
         CreateInfoProduct(&p);
-        
+        olx->iparse.start=olx->iparse.end;
         olx->iparse.end=olx->site->html.SearchWordIndex(&olx->site->html,olx->iparse.start,olx->site->indexrecord,2,"\"l-card\"");
         if(olx->iparse.end==-1)
             olx->iparse.end=olx->site->indexrecord;
@@ -104,9 +134,22 @@ void CreateOlxSearchSite(OlxSearchSite_t* olx,site* site){
     CreateIParseInfoProduct(&olx->iparse);
     olx->iparse.ParseLink=ParseSearchLink;
     olx->iparse.ParsePrice=ParseSearchPrice;
+    olx->iparse.ParseNameProduct=ParseNameProduct;
     olx->ParseAllProduct=ParseAllProduct;
     olx->site=site;
+    olx->countpage=GetCountPageUrl(site);
 }
+void AnalizSearch(OlxAnalizSearch_t* self){
+    
+}
+void CreateOlxAnalizSearch(OlxAnalizSearch_t* olx,string url){
+    olx->AnalizSearch=AnalizSearch;
+    olx->url=url;
+}
+void DeleteOlxAnalizSearch(OlxAnalizSearch_t* olx){
+    DeleteString(&olx->url);
+}
+
 // void ProcLink(PSsearch* pr){
 //     if(pr->link.chararray==NULL)
 //         return;
