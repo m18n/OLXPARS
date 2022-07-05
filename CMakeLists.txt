@@ -1,6 +1,10 @@
 cmake_minimum_required(VERSION 3.0)
 project(OlxParse)
+set(CMAKE_THREAD_LIBS_INIT "-lpthread")
+set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -pthread")
 find_package(CURL REQUIRED)
-include_directories(${CURL_INCLUDE_DIR})
-add_executable(${PROJECT_NAME} main.c corecurl.c core.c olxparse.c)
-target_link_libraries(${PROJECT_NAME} ${CURL_LIBRARIES})
+include_directories(${CURREQUIREDL_INCLUDE_DIR})
+include_directories("include/sqlite")
+
+add_executable(${PROJECT_NAME} main.c src/sqlite3.c  database.c corecurl.c core.c olxparse.c )
+target_link_libraries(${PROJECT_NAME} ${CURL_LIBRARIES} ${CMAKE_DL_LIBS})

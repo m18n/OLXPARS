@@ -1,5 +1,17 @@
 #pragma once
 #include"olxparse.h"
+#include<stdbool.h>
+#include<pthread.h>
+#define FIND_THREAD 10
+#define NOT_DONE 0
+#define PROСESS 1
+#define DONE 2
+typedef char status_task;
+typedef struct task{
+    void(*fun)();
+    status_task stat; 
+}task_t;
+void CreateTask(task_t* task);
 
 // void ParseOlxPages(CURL* curl,const char* url){
 //     int sizeurl=strlen(url);
@@ -35,3 +47,7 @@
         
     
 // }
+
+void ManagerFind(void*em);
+void CreateFindPthread(stdarray* tasks_find);
+void DeleteFindPthread(pthread_t* finds);

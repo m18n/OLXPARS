@@ -1,5 +1,14 @@
 #include "include/core.h"
-
+void strget(char* arr,int maxsize,FILE *__stream){
+    while(1){
+    
+    fgets(arr,maxsize,__stream);
+    if ((strlen(arr) > 0) && (arr[strlen (arr) - 1] == '\n'))
+        arr[strlen (arr) - 1] = '\0';
+    if(arr[0]!='\0')
+        break;
+    }
+}
 int SearchWord(string* self,const char* search)
 {
     int len = strlen(search);

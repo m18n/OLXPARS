@@ -8,7 +8,7 @@ typedef struct stdarray
     void* array;
     int size;
 }stdarray;
-
+void strget(char* arr,int maxsize,FILE *__stream);
 
 typedef struct string{
     int(*SearchWord)(struct string* self,const char* search);

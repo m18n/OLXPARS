@@ -18,23 +18,26 @@ static size_t write_data(void *ptr, size_t size, size_t nmemb, void *data)
     }else{
         memcpy(s->html.chararray+s->indexrecord,ptr,realsize);
         s->indexrecord+=realsize;
+        
         s->html.length=s->indexrecord;
     }
   return realsize;
 }
 
-site DownloadSite(CURL* curl,const char* url,int maxsize){
+site DownloadSite(const char* url,int maxsize){
     CURLcode res;
-    curl=curl_easy_init();
+    CURL* curl=curl_easy_init();
     site s;
     CreateSite(&s,maxsize);
     curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, write_data);
     curl_easy_setopt(curl,CURLOPT_URL,url);
     curl_easy_setopt(curl, CURLOPT_WRITEDATA,&s);
-    int start=clock();
+    clock_t start = clock();
     res=curl_easy_perform(curl);
-    int end=clock();
-    printf("get SITE TIME: %d\n",end-start);
+    clock_t end = clock();
+     double seconds = (double)(end - start) / CLOCKS_PER_SEC;
+  printf("DOWNLOAD SITE time: %f seconds\n", seconds);
+
     return s;
 }
 void DownloadSitePtr(site* s,CURL* curl,const char* url){

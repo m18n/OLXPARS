@@ -9,6 +9,7 @@
             "command": "cmake",
             "args": [
                 "-DCMAKE_BUILD_TYPE=Debug",
+                "-DCMAKE_C_COMPILER=gcc",
                 "${workspaceFolder}"
             ],
             "options": {
@@ -19,6 +20,7 @@
             "label": "make_debug",
             "type": "shell",
             "command": "make",
+           
             "options": {
                 "cwd": "${workspaceFolder}/build/x64/Debug"
             }
@@ -37,6 +39,7 @@
             "command": "cmake",
             "args": [
                 "-DCMAKE_BUILD_TYPE=Release",
+                "-DCMAKE_C_COMPILER=gcc",
                 "${workspaceFolder}"
             ],
             "options": {

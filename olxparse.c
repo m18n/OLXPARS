@@ -106,6 +106,9 @@ void ParseNameProduct(IParseInfoProduct_t* self,InfoProduct_t* info,site* s){
     string name=s->html.GetStringSignEnd(&s->html,index,self->end,'<');
     info->name=name;
 }
+void ParsePage(OlxSearchSite_t* olx){
+    
+}
 stdarray ParseAllProduct(OlxSearchSite_t* olx){
     printf("COUNT PAGE: %d\n",olx->countpage);
     int indexparse=olx->site->html.SearchWordIndex(&olx->site->html,0,olx->site->indexrecord,1,"<body>");
