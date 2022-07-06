@@ -90,51 +90,90 @@ void IndexBack(int size,int *index,int *end){
   }
   return end;
 }
+bool CheckId(void* elem1,void* elem2){
+  olxsearchlink_t* olx=(olxsearchlink_t*)elem1;
+  int id2=(int)elem2;
+  if(olx->id==(int)elem2){
+    return true;
+  }
+  return false;
+}
 void ShowLink(olxdatabase_t* olx){
   int size=0;
-  olxsearchlink_t* s=olx->GetSearchLink(olx,0,100,&size);
+  stdarray_t arr=olx->GetSearchLink(olx,0,0,&size);
   int index=0;
-   int end=0;
+  int end=0;
   IndexNext(size,&index,&end);
   while(true){
+    olxsearchlink_t* s=(olxsearchlink_t*)arr.array;
+    
     for(int i=index;i<end;i++){
         s[i].Show(&s[i]);
+  
       }
-    printf("NEXT | 0\nBACK | 1\nEXIT | 2\n");
+    printf("NEXT | 0\nBACK | 1\nREMOVE ID | 2\nEXIT | 3\n");
     int number=0;
     scanf("%d",&number);
     if(number==0){
       
       IndexNext(size,&index,&end);
+      system("clear");
     }else if(number==1){
       
       IndexBack(size,&index,&end);
+      system("clear");
     }else if(number==2){
+      char id[200];
+      printf("INPUT ID: ");
+      strget(id,200,stdin);
+      string td;
+      CreateString(&td);
+      td.SetRefArray(&td,id,200);
+      int sizes=0;
+      string* str=Tok(td,' ',&sizes);
+      for(int i=0;i<sizes;i++){
+        printf("ID: %s\n",str[i].chararray);
+        int id=atoi(str[i].chararray);
+        int index=arr.SearchItemPred(&arr,id,CheckId);
+        printf("INDEX: %d\n",index);
+        s[index].DeleteOnDataBase(&s[index]);
+        arr.DeleteElement(&arr,index);
+        DeleteString(&str[i]);
+        size--;
+      }
+      end=0;
+      index=0;
+      IndexNext(size,&index,&end);
+      IndexBack(size,&index,&end);
+      system("clear");
+    }else if(number==3){
       break;
     }
-    system("clear");
+  
   }
   for(int i=0;i<size;i++){
+     olxsearchlink_t* s=(olxsearchlink_t*)arr.array;
     DestroyOlxSearchLink(&s[i]);
   }
-  free(s);
+  DeleteStdArray(arr);
 }
+
+
 void Menu(olxdatabase_t* olx){
   while (true)
   {
  
   
-  printf("HAY MENU OLXANL\nSHOW LINKS ANALIZ | 0\nADD LINKS ANALIZ | 1\nEXIT | 2\n");
+  printf("HAY MENU OLXANL\nSHOW LINKS ANALIZ | 0\nADD LINKS ANALIZ | 1\nEXIT | 3\n");
   printf("INPUT NUMBER ITEM:");
   int number=0;
   scanf("%d",&number);
   system("clear");
   if(number==0){
     ShowLink(olx);
-   
   }else if(number==1){
     InputLink(olx);
-  }else if(number==2){
+  }else if(number==3){
     break;
   }
   system("clear");

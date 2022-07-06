@@ -33,7 +33,7 @@ void CreateTask(task_t* task);
 //         for(int i=0;i<pages;i++){
 //             printf("\nURL: %s\n\n",urlf);
 //             SetSite(&s,curl,urlf);
-//             stdarray products=ParseSearchPage(&s,urlf);
+//             stdarray_t products=ParseSearchPage(&s,urlf);
 //             ParseProductPage(&s,products,curl);
             
 //             free(products.array);
@@ -49,5 +49,5 @@ void CreateTask(task_t* task);
 // }
 
 void ManagerFind(void*em);
-void CreateFindPthread(stdarray* tasks_find);
+void CreateFindPthread(stdarray_t* tasks_find);
 void DeleteFindPthread(pthread_t* finds);

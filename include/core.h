@@ -1,13 +1,24 @@
 #pragma once
 #include<stdio.h>
 #include<stdlib.h>
-
+#include<stdbool.h>
 #include<string.h>
 typedef struct stdarray
 {
     void* array;
-    int size;
-}stdarray;
+    int length;
+    int elementsize;
+    int(*SearchItem)(struct stdarray* self,void* element);
+    int(*SearchItemPred)(struct stdarray* self,void* element,bool(*predic)(void* elone,void* eltwo));
+    void (*DeleteElement)(struct stdarray* self,int index);
+}stdarray_t;
+bool CheckClone(void* element,void* twoelement,int elementsize);
+int SearchItem(stdarray_t* self,void* element);
+int SearchItemPred(stdarray_t* self,void* element,bool(*predic)(void* elone,void* eltwo));
+void DeleteElement(stdarray_t* self,int index);
+void CreateStdArray(stdarray_t* std);
+void InitStdArraySize(stdarray_t* std,int length,int elementsize);
+void DeleteStdArray(stdarray_t std);
 void strget(char* arr,int maxsize,FILE *__stream);
 
 typedef struct string{
@@ -20,7 +31,7 @@ typedef struct string{
     void(*Show)(struct string*self);
     int(*GetCountWord)(struct string* self,int startindex,const char* word);
     void(*DeleteSymbol)(struct string* self,char symbol);
-    void (*SetRefArray)(struct string* self,char* chararray);
+    void (*SetRefArray)(struct string* self,char* chararray,int sizearray);
     void (*SetConstCharArray)(struct string*self,const char* arr);
     void (*SetCharArray)(struct string* self,char* chararray,int sizebuffer);
     void (*Add)(struct string* self,const char* arr);
@@ -37,7 +48,7 @@ void AddString(struct string* self,struct string str);
 string Copy(struct string* self);
 void ResizeString(struct string* self,int newsize);
 void AddChar(struct string* self,const char* arr);
-void SetRefArray(struct string* self,char* chararray);
+void SetRefArray(struct string* self,char* chararray,int sizearray);
 void SetConstCharArray(struct string* self,const char* arr);
 void CopyCharArray(struct string* self,char* chararray,int sizebuffer);
 int SearchWord(string* self,const char* search);

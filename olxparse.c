@@ -109,7 +109,7 @@ void ParseNameProduct(IParseInfoProduct_t* self,InfoProduct_t* info,site* s){
 void ParsePage(OlxSearchSite_t* olx){
     
 }
-stdarray ParseAllProduct(OlxSearchSite_t* olx){
+stdarray_t ParseAllProduct(OlxSearchSite_t* olx){
     printf("COUNT PAGE: %d\n",olx->countpage);
     int indexparse=olx->site->html.SearchWordIndex(&olx->site->html,0,olx->site->indexrecord,1,"<body>");
     int count=olx->site->html.GetCountWord(&olx->site->html,0,"\"l-card\"");
@@ -128,9 +128,11 @@ stdarray ParseAllProduct(OlxSearchSite_t* olx){
         p.Show(&p);
         arrp[i]=p;
     }
-    stdarray ar;
+    stdarray_t ar;
+    CreateStdArray(&ar);
     ar.array=arrp;
-    ar.size=count;
+    ar.length=count;
+    ar.elementsize=sizeof(InfoProduct_t);
     return ar;
 }
 void CreateOlxSearchSite(OlxSearchSite_t* olx,site* site){
@@ -270,7 +272,7 @@ void DeleteOlxAnalizSearch(OlxAnalizSearch_t* olx){
 //     int a = 10;
 //     return p;
 // }
-// stdarray ParseSearchPage(site* s,const char* url){
+// stdarray_t ParseSearchPage(site* s,const char* url){
 //     int indexparse=s->html.SearchWordIndex(&s->html,0,s->indexrecord,1,"<body>");
 //     int count=s->html.GetCountWord(&s->html,0,"\"css-1bbgabe\"");
 //     PSsearch* arrp=malloc(sizeof(PSsearch)*count);
@@ -288,7 +290,7 @@ void DeleteOlxAnalizSearch(OlxAnalizSearch_t* olx){
 //         p.time=time;
 //         arrp[i]=p;
 //     }
-//     stdarray ar;
+//     stdarray_t ar;
 //     ar.array=arrp;
 //     ar.size=count;
 //     return ar;
@@ -314,7 +316,7 @@ void DeleteOlxAnalizSearch(OlxAnalizSearch_t* olx){
 //     printf("PSEARCH: PRICE[ %d ] LINK[ %s ]\n",p->price,p->link);
 //     printf("VIEWS: [ %d ] COF: [ %f ] TIME DAY: %d, MINUTES: %d\n",p->countview,p->cof,p->time.day,p->time.minutes);
 // }
-// void ParseProductPage(site* s,stdarray ps,CURL* curl){
+// void ParseProductPage(site* s,stdarray_t ps,CURL* curl){
 //     PSsearch* pr=ps.array;
 //     int indexview=0;
 //     string link;

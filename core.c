@@ -1,4 +1,66 @@
 #include "include/core.h"
+bool CheckClone(void* element,void* twoelement,int elementsize){
+    for(int i=0;i<elementsize;i++){
+        if(element!=twoelement){
+            return false;
+        }
+        element++;
+        twoelement++;
+    }
+    return true;
+}
+int SearchItem(stdarray_t* self,void* element){
+    void*start=self->array;
+    for(int i=0;i<self->length;i++){
+        if(CheckClone(start,element,self->elementsize)){
+            return i;
+        }
+        start+=self->elementsize;
+    }
+    return -1;
+}
+int SearchItemPred(stdarray_t* self,void* element,bool(*predic)(void* elone,void* eltwo)){
+    void*start=self->array;
+    for(int i=0;i<self->length;i++){
+        if(predic(start,element)){
+            return i;
+        }
+        start+=self->elementsize;
+    }
+    return -1;
+}
+void DeleteElement(stdarray_t* self,int index){
+    int newsize=(self->length-1)*self->elementsize;
+    void* temp=malloc(newsize);
+    void* indexpt=temp;
+    if(index>0){
+        memcpy(temp,self->array,index*self->elementsize);
+        indexpt+=index*self->elementsize;
+        memcpy(indexpt,self->array+(index+1)*self->elementsize,(self->length-index-1)*self->elementsize);
+    }
+    else{
+        memcpy(temp,self->array+self->elementsize,(self->length-1)*self->elementsize);
+    }
+    self->array=temp;
+    self->length--;
+}
+void CreateStdArray(stdarray_t* std){
+    std->array=NULL;
+    std->length=0;
+    std->elementsize=0;
+    std->SearchItem=SearchItem;
+    std->SearchItemPred=SearchItemPred;
+    std->DeleteElement=DeleteElement;
+}
+void InitStdArraySize(stdarray_t* std,int length,int elementsize){
+    CreateStdArray(std);
+    std->length=length;
+    std->elementsize=elementsize;
+    std->array=malloc(length*elementsize);
+}
+void DeleteStdArray(stdarray_t std){
+    free(std.array);
+}
 void strget(char* arr,int maxsize,FILE *__stream){
     while(1){
     
@@ -226,6 +288,8 @@ string* Tok(string str,char sign,int* rsize){
     string* arr=malloc(sizeof(string)*tsize);
     for(int i=0;i<str.length;i++){
         if(str.chararray[i]==sign||i==str.length-1){
+            if(i==str.length-1)
+                i++;
             int size=i-last;
             string s;
             CreateStringInit(&s,size+1);
@@ -248,7 +312,7 @@ string GetString(string* self,int startindex,int length)
     text[length]='\0';
     string str;
     CreateString(&str);
-    str.SetRefArray(&str,text);
+    str.SetRefArray(&str,text,length+1);
     return str;
 }
 string GetStringSign(string* self,int startindex,char sign)
@@ -275,7 +339,7 @@ string GetStringSign(string* self,int startindex,char sign)
         text = malloc(size + 1);
         memcpy(text, self->chararray + startindex, size);
         text[size] = '\0';
-        str.SetRefArray(&str,text);
+        str.SetRefArray(&str,text,size+1);
     }
     
     
@@ -305,16 +369,16 @@ string GetStringSignEnd(string* self,int startindex,int endindex,char sign){
         memcpy(text, self->chararray + startindex, size);
         text[size] = '\0';
         
-        str.SetRefArray(&str,text);
+        str.SetRefArray(&str,text,size+1);
     }
     
     
     return str;
 }
-void SetRefArray(struct string* self,char* chararray){
+void SetRefArray(struct string* self,char* chararray,int sizearray){
     self->chararray=chararray;
-    self->sizearray=strlen(chararray);
-    self->length=self->sizearray;
+    self->sizearray=sizearray;
+    self->length=strlen(chararray);
 }
 void SetConstCharArray(struct string* self,const char* arr){
     int sizebuffer=strlen(arr);
