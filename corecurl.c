@@ -5,8 +5,8 @@ void CreateSite(site* s,int maxsize){
     CreateString(&s->url);
 }
 void DeleteSite(site* s){
-    DeleteString(&s->html);
-    DeleteString(&s->url);
+    DeleteString(s->html);
+    DeleteString(s->url);
 }
 static size_t write_data(void *ptr, size_t size, size_t nmemb, void *data)
 {

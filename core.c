@@ -503,9 +503,18 @@ void CreateStringCopyConst(string* self,const char* array){
     CreateString(self);
     self->SetCharArray(self,array,strlen(array)+1);
 }
-void DeleteString(string* self){
-    if(self->chararray!=NULL)
-        free(self->chararray);
+void CreateStringRef(string* self,char* array,int sizebuffer){
+     CreateString(self);
+     self->SetRefArray(self,array,sizebuffer);
+}
+void DeleteString(string self){
+    if(self.chararray!=NULL)
+        free(self.chararray);
+}
+void DeleteStringArr(string* self,int size){
+    for(int i=0;i<size;i++){
+        DeleteString(self[i]);
+    }
 }
 void ShowInfoProduct(InfoProduct_t* info){
     printf("NAME: %s PRICE: %d DESCRIPT: %s URL: %s\n",info->name.chararray,info->price,info->descript.chararray,info->url.chararray);

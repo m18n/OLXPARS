@@ -72,8 +72,9 @@ void CreateStringInit(string* self,int sizearray);
 void CreateStringCopy(string* self,char* array,int sizebuffer);
 void StringMove(string* self,string* two);
 void CreateStringCopyConst(string* self,const char* array);
-void DeleteString(string* self);
-
+void CreateStringRef(string* self,char* array,int sizebuffer);
+void DeleteString(string self);
+void DeleteStringArr(string* self,int size);
 typedef struct time{
     int day;
     int month;

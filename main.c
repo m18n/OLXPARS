@@ -53,14 +53,21 @@ void Test(CURL* curl){
 void InputLink(olxdatabase_t* olx){
    
   while(true){
-    printf("INPUT LINK: EXIT: 0\n");
-    char link[LINK_S];
-    strget(link,LINK_S,stdin);
-    if(strcmp(link,"0")==0){
+    printf("INPUT LINK AND MIN PRICE : EXIT: 0\n");
+    int size=LINK_S+6;
+    char data[size];
+    strget(data,size,stdin);
+    if(strcmp(data,"0")==0){
       printf("END INPUT LINK\n");
       break;
     }else{
-      olx->AddSearchLink(olx,link);
+      string d;
+      CreateStringRef(&d,data,size);
+      int rsize=0;
+      string* str=Tok(d,' ',&rsize);
+      if(rsize>=2)
+        olx->AddSearchLink(olx,str[0].chararray,str[1].chararray);
+      DeleteStringArr(str,rsize);
     }
   }
 }
@@ -132,14 +139,18 @@ void ShowLink(olxdatabase_t* olx){
       int sizes=0;
       string* str=Tok(td,' ',&sizes);
       for(int i=0;i<sizes;i++){
+       
         printf("ID: %s\n",str[i].chararray);
         int id=atoi(str[i].chararray);
         int index=arr.SearchItemPred(&arr,id,CheckId);
-        printf("INDEX: %d\n",index);
-        s[index].DeleteOnDataBase(&s[index]);
-        arr.DeleteElement(&arr,index);
-        DeleteString(&str[i]);
-        size--;
+        if(index!=-1){
+          printf("INDEX: %d\n",index);
+          s[index].DeleteOnDataBase(&s[index]);
+          arr.DeleteElement(&arr,index);
+          s=(olxsearchlink_t*)arr.array;
+          size--;
+        }
+        DeleteString(str[i]);
       }
       end=0;
       index=0;
@@ -158,13 +169,19 @@ void ShowLink(olxdatabase_t* olx){
   DeleteStdArray(arr);
 }
 
-
+void StartAnaliz(olxdatabase_t* olx){
+    system("clear");
+  int size=0;
+  stdarray_t arr=olx->GetSearchLink(olx,0,0,&size);
+  printf("ANALIZ LINKS START\n");
+  
+}
 void Menu(olxdatabase_t* olx){
   while (true)
   {
  
   
-  printf("HAY MENU OLXANL\nSHOW LINKS ANALIZ | 0\nADD LINKS ANALIZ | 1\nEXIT | 3\n");
+  printf("HAY MENU OLXANL\nSHOW LINKS ANALIZ | 0\nADD LINKS ANALIZ | 1\nSTART ANALIZ LINK | 2\nEXIT | 3\n");
   printf("INPUT NUMBER ITEM:");
   int number=0;
   scanf("%d",&number);
@@ -173,6 +190,8 @@ void Menu(olxdatabase_t* olx){
     ShowLink(olx);
   }else if(number==1){
     InputLink(olx);
+  }else if(number==2){
+    StartAnaliz(olx);
   }else if(number==3){
     break;
   }
@@ -190,6 +209,7 @@ int main(){
     //sleep(10000);
     site s=DownloadSite("https://www.olx.ua/d/elektronika/audiotehnika/naushniki/q-%D0%BD%D0%B0%D0%B2%D1%83%D1%88%D0%BD%D0%B8%D0%BA%D0%B8/?currency=UAH&search%5Border%5D=filter_float_price:desc&search%5Bfilter_float_price:from%5D=6000&search%5Bfilter_float_price:to%5D=8000",10000000);
     Record(s.html.chararray,s.indexrecord,"my.html");
+    
     // OlxSearchSite_t olx;
     // CreateOlxSearchSite(&olx,&s);
     // olx.ParseAllProduct(&olx);

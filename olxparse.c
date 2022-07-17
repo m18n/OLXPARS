@@ -20,7 +20,7 @@ int GetCountPageUrl(site* site){
     index++;
     string str=site->html.GetStringSignEnd(&site->html,index,site->indexrecord,'<');
     int count=atoi(str.chararray);
-    DeleteString(&str);
+    DeleteString(str);
     return count;
 }
 void ParseProduct(IParseInfoProduct_t* self,InfoProduct_t* info,site* s){
@@ -94,7 +94,7 @@ void ParseSearchPrice(IParseInfoProduct_t* self,InfoProduct_t* info,site* s){
     price.DeleteSymbol(&price,' ');
     int inpr=atoi(price.chararray);
     
-    DeleteString(&price);
+    DeleteString(price);
     
     info->price=inpr;
     
@@ -152,7 +152,7 @@ void CreateOlxAnalizSearch(OlxAnalizSearch_t* olx,string url){
     olx->url=url;
 }
 void DeleteOlxAnalizSearch(OlxAnalizSearch_t* olx){
-    DeleteString(&olx->url);
+    DeleteString(olx->url);
 }
 
 // void ProcLink(PSsearch* pr){

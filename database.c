@@ -1,6 +1,6 @@
 #include"include/database.h"
 void ShowOlxSearchLink(struct olxsearchlink* self){
-    printf("ID: %d LINK: %s\n",self->id,self->link);
+    printf("ID: %d LINK: %s MIN PRICE: %d\n",self->id,self->link,self->minprice);
 }
 void DeleteDataBaseOlxSearchLink(struct olxsearchlink* self){
     char buffsql[1000];
@@ -13,12 +13,20 @@ void DeleteDataBaseOlxSearchLink(struct olxsearchlink* self){
     strcpy(&buffsql[length],"\"");
     sql_exec(self->db,buffsql);
 }
-void InitOlxSearchLink(olxsearchlink_t* olx,char* link,int id,sqlite3* db){
-    olx->id=id;
-    olx->link=link;
+void CreateOlxSearchLink(olxsearchlink_t* olx){
+    olx->id=0;
+    olx->link=NULL;
+    olx->db=NULL;
+    olx->minprice=0;
     olx->Show=ShowOlxSearchLink;
     olx->DeleteOnDataBase=DeleteDataBaseOlxSearchLink;
+}
+void InitOlxSearchLink(olxsearchlink_t* olx,char* link,int id,sqlite3* db,int minprice){
+    CreateOlxSearchLink(olx);
+    olx->id=id;
+    olx->link=link;
     olx->db=db;
+    olx->minprice=minprice;
 }
 void DestroyOlxSearchLink(olxsearchlink_t* olx){
     free(olx->link);
@@ -72,8 +80,9 @@ stdarray_t GetSearchLink(struct olxdatabase* self,int start,int end,int* size){
         olxsearchlink_t* linke=(olxsearchlink_t*)links.array;
         int id = sqlite3_column_int(res,0); // = query.getColumn(0).getInt();
         char* link=sqlite3_column_text(res,1);
+        int minprice=sqlite3_column_int(res,2);
         olxsearchlink_t olx;
-        InitOlxSearchLink(&olx,link,id,self->db);
+        InitOlxSearchLink(&olx,NULL,id,self->db,minprice);
         int length=strlen(link);
         olx.link=malloc(sizeof(char)*length);
         strcpy(olx.link,link);
@@ -85,20 +94,28 @@ stdarray_t GetSearchLink(struct olxdatabase* self,int start,int end,int* size){
     *size=n;
     return links;
 }
-void AddSearchLink(olxdatabase_t* self,char link[LINK_S]){
+void AddSearchLink(olxdatabase_t* self,char link[LINK_S],char minprice[PRICE_S]){
     char buffsql[1000];
-    strcpy(buffsql,"INSERT INTO LinkSearch (link) VALUES ('");
+    strcpy(buffsql,"INSERT INTO LinkSearch (link,minprice) VALUES ('");
     int length=strlen(buffsql);
     strcpy(&buffsql[length],link);
     length=strlen(buffsql);
-    strcpy(&buffsql[length],"');");
+    strcpy(&buffsql[length],"',");
+     length=strlen(buffsql);
+    strcpy(&buffsql[length],minprice);
+    length=strlen(buffsql);
+    strcpy(&buffsql[length],");");
     sql_exec(self->db,buffsql);
 }
-void InitDataBase(olxdatabase_t* olx,const char namedatabase[50]){
-    strcpy(olx->namedatabase,namedatabase);
+void CreateOlxDataBase(olxdatabase_t* olx){
+    olx->db=NULL;
     olx->AddSearchLink=AddSearchLink;
     olx->GetSearchLink=GetSearchLink;
     olx->GetCount=GetCount;
+}
+void InitDataBase(olxdatabase_t* olx,const char namedatabase[50]){
+    CreateOlxDataBase(olx);
+    strcpy(olx->namedatabase,namedatabase);
     sqlite3_open(namedatabase,&olx->db);
 }
 void DestroyDataBase(olxdatabase_t* olx){
