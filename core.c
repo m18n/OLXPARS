@@ -19,6 +19,22 @@ int SearchItem(stdarray_t* self,void* element){
     }
     return -1;
 }
+void AddElementStdArray(stdarray_t* self,void* element){
+    if(self->copacyty>self->length){
+        void* ptr=self->array+self->length*self->elementsize;
+        memcpy(ptr,element,self->elementsize);
+        self->length++;
+    }else{
+        void* newarray=malloc((self->length+1)*self->elementsize);
+        memcpy(newarray,self->array,self->length*self->elementsize);
+        void* temp=newarray+self->length*self->elementsize;
+        memcpy(temp,element,self->elementsize);
+        free(self->array);
+        self->array=newarray;
+        self->length++;
+        self->copacyty=self->length;
+    }
+}
 int SearchItemPred(stdarray_t* self,void* element,bool(*predic)(void* elone,void* eltwo)){
     void*start=self->array;
     for(int i=0;i<self->length;i++){
@@ -47,16 +63,19 @@ void DeleteElement(stdarray_t* self,int index){
 void CreateStdArray(stdarray_t* std){
     std->array=NULL;
     std->length=0;
+    std->copacyty=0;
     std->elementsize=0;
     std->SearchItem=SearchItem;
     std->SearchItemPred=SearchItemPred;
     std->DeleteElement=DeleteElement;
+    std->AddElement=AddElementStdArray;
 }
 void InitStdArraySize(stdarray_t* std,int length,int elementsize){
     CreateStdArray(std);
+    std->copacyty=length+5;
     std->length=length;
     std->elementsize=elementsize;
-    std->array=malloc(length*elementsize);
+    std->array=malloc(std->copacyty*elementsize);
 }
 void DeleteStdArray(stdarray_t std){
     free(std.array);
@@ -516,6 +535,8 @@ void DeleteStringArr(string* self,int size){
         DeleteString(self[i]);
     }
 }
+
+
 void ShowInfoProduct(InfoProduct_t* info){
     printf("NAME: %s PRICE: %d DESCRIPT: %s URL: %s\n",info->name.chararray,info->price,info->descript.chararray,info->url.chararray);
 }

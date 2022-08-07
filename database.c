@@ -28,8 +28,8 @@ void InitOlxSearchLink(olxsearchlink_t* olx,char* link,int id,sqlite3* db,int mi
     olx->db=db;
     olx->minprice=minprice;
 }
-void DestroyOlxSearchLink(olxsearchlink_t* olx){
-    free(olx->link);
+void DestroyOlxSearchLink(olxsearchlink_t olx){
+    free(olx.link);
 }
 
 void sql_exec(sqlite3* db,const char* sql){

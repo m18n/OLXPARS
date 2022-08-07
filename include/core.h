@@ -3,18 +3,40 @@
 #include<stdlib.h>
 #include<stdbool.h>
 #include<string.h>
+typedef struct vec2
+{
+    void* v1;
+    void* v2;
+}vec2_t;
+typedef struct vec3
+{
+    void* v1;
+    void* v2;
+    void* v3;
+
+}vec3_t;
+typedef struct vec4
+{
+    void* v1;
+    void* v2;
+    void* v3;
+    void* v4;
+}vec4_t;
 typedef struct stdarray
 {
     void* array;
     int length;
+    int copacyty;
     int elementsize;
     int(*SearchItem)(struct stdarray* self,void* element);
     int(*SearchItemPred)(struct stdarray* self,void* element,bool(*predic)(void* elone,void* eltwo));
     void (*DeleteElement)(struct stdarray* self,int index);
+    void (*AddElement)(struct stdarray* self,void* element);
 }stdarray_t;
 bool CheckClone(void* element,void* twoelement,int elementsize);
 int SearchItem(stdarray_t* self,void* element);
 int SearchItemPred(stdarray_t* self,void* element,bool(*predic)(void* elone,void* eltwo));
+void AddElementStdArray(stdarray_t* self,void* element);
 void DeleteElement(stdarray_t* self,int index);
 void CreateStdArray(stdarray_t* std);
 void InitStdArraySize(stdarray_t* std,int length,int elementsize);

@@ -6,5 +6,5 @@ find_package(CURL REQUIRED)
 include_directories(${CURREQUIREDL_INCLUDE_DIR})
 include_directories("include/sqlite")
 
-add_executable(${PROJECT_NAME} main.c src/sqlite3.c  database.c corecurl.c core.c olxparse.c )
+add_executable(${PROJECT_NAME} main.c src/sqlite3.c  database.c corecurl.c core.c olxparse.c olxmanager.c)
 target_link_libraries(${PROJECT_NAME} ${CURL_LIBRARIES} ${CMAKE_DL_LIBS})

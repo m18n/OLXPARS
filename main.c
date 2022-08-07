@@ -6,6 +6,7 @@
 #include"include/olxmanager.h"
 #include <unistd.h>
 #include"include/database.h"
+findpthread_t find;
 // olxdata Menu(){
 //     printf("INPUT SEARCH SITE: \n");
 //     olxdata in;
@@ -164,7 +165,7 @@ void ShowLink(olxdatabase_t* olx){
   }
   for(int i=0;i<size;i++){
      olxsearchlink_t* s=(olxsearchlink_t*)arr.array;
-    DestroyOlxSearchLink(&s[i]);
+    DestroyOlxSearchLink(s[i]);
   }
   DeleteStdArray(arr);
 }
@@ -173,8 +174,29 @@ void StartAnaliz(olxdatabase_t* olx){
     system("clear");
   int size=0;
   stdarray_t arr=olx->GetSearchLink(olx,0,0,&size);
-  printf("ANALIZ LINKS START\n");
+  olxsearchlink_t* s=(olxsearchlink_t*)arr.array;
   
+  printf("ANALIZ LINKS START\n");
+  CreateFindPthread(&find);
+  InitFindPthread(&find,10);
+  find.StartThreads(&find);
+  char buff[200];
+  for(int i=0;i<80;i++){
+    task_t task;
+    CreateTask(&task);
+    string* str=malloc(sizeof(string));
+    snprintf(buff,200,"%d",i);
+    CreateStringCopyConst(str,buff);
+    task.data=str;
+    task.fun=GetMaxSearch;
+    find.AddTasks(&find,task);
+  }
+
+  int number=0;
+  scanf("%d",&number);
+  for(int i=0;i<arr.length;i++){
+    DestroyOlxSearchLink(s[i]);
+  }
 }
 void Menu(olxdatabase_t* olx){
   while (true)
