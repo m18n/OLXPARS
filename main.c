@@ -181,12 +181,11 @@ void StartAnaliz(olxdatabase_t* olx){
   InitFindPthread(&find,10);
   find.StartThreads(&find);
   char buff[200];
-  for(int i=0;i<80;i++){
+  for(int i=0;i<arr.length;i++){
     task_t task;
     CreateTask(&task);
     string* str=malloc(sizeof(string));
-    snprintf(buff,200,"%d",i);
-    CreateStringCopyConst(str,buff);
+    CreateStringCopyConst(str,s[i].link);
     task.data=str;
     task.fun=GetMaxSearch;
     find.AddTasks(&find,task);
@@ -224,12 +223,12 @@ int main(){
     system("clear");
     olxdatabase_t olx;
     InitDataBase(&olx,"olx.sqlite");
-    Menu(&olx);
+    //Menu(&olx);
     //strcpy(input.search,"https://www.olx.ua/d/list/q-car/?search%5Bfilter_float_price%3Afrom%5D=10&search%5Bfilter_float_price%3Ato%5D=200&page=1");    
     CURL* curl=NULL;
   //Test(curl);
     //sleep(10000);
-    site s=DownloadSite("https://www.olx.ua/d/elektronika/audiotehnika/naushniki/q-%D0%BD%D0%B0%D0%B2%D1%83%D1%88%D0%BD%D0%B8%D0%BA%D0%B8/?currency=UAH&search%5Border%5D=filter_float_price:desc&search%5Bfilter_float_price:from%5D=6000&search%5Bfilter_float_price:to%5D=8000",10000000);
+    site s=DownloadSite("https://www.olx.ua/d/uk/obyavlenie/umnyy-smart-fitnes-braslet-chasy-treker-xiaomi-mi-band-mi-bend-5-6-IDNpx7q.html",10000000);
     Record(s.html.chararray,s.indexrecord,"my.html");
     
     // OlxSearchSite_t olx;

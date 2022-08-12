@@ -100,8 +100,9 @@ void DeleteFindPthread(findpthread_t* find){
 void GetMaxSearch(void*data){
     datapthread_t* d=(datapthread_t*)data;
     string* str=(string*) d->data;
-    printf("START FUNCITON %s\n",str->chararray);
-    sleep(1);
+    printf("START FUNCITON %s THREAD: %d\n",str->chararray,d->pth);
+    site s=DownloadSite(str->chararray,1000000000);
+    printf("DONWLOAD BYTE: %d THREAD: %d\n",s.indexrecord,d->pth);
     DeleteString(*str);
     free(str);
     free(data);

@@ -40,11 +40,11 @@ site DownloadSite(const char* url,int maxsize){
 
     return s;
 }
-void DownloadSitePtr(site* s,CURL* curl,const char* url){
+void DownloadSitePtr(site* s,const char* url){
     CURLcode res;
     s->indexrecord=0;
     CreateStringCopyConst(&s->url,url);
-    curl=curl_easy_init();
+    CURL* curl=curl_easy_init();
     curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, write_data);
     curl_easy_setopt(curl,CURLOPT_URL,url);
     curl_easy_setopt(curl, CURLOPT_WRITEDATA,s);
@@ -53,11 +53,11 @@ void DownloadSitePtr(site* s,CURL* curl,const char* url){
     int end=clock();
     printf("get SITE TIME: %d\n",end-start);
 }
-void DownloadSitePtrPOST(site* s,CURL* curl,const char* url,const char* postfile){
+void DownloadSitePtrPOST(site* s,const char* url,const char* postfile){
     CURLcode res;
     s->indexrecord=0;
     CreateStringCopyConst(&s->url,url);
-    curl=curl_easy_init();
+    CURL* curl=curl_easy_init();
     curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, write_data);
     curl_easy_setopt(curl,CURLOPT_URL,url);
     curl_easy_setopt(curl, CURLOPT_WRITEDATA,s);

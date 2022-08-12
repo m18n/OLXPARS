@@ -20,7 +20,7 @@ typedef struct OlxSearchSite{
     stdarray_t(*ParseAllProduct)(struct OlxSearchSite* olx);
     site* site;
     int countpage;
-}OlxSearchSite_t;
+}OlxSearchSite_t; 
 void ParseSearchLink(IParseInfoProduct_t* self,InfoProduct_t* info,site* s);
 void ParseSearchPrice(IParseInfoProduct_t* self,InfoProduct_t* info,site* s);
 void ParseNameProduct(IParseInfoProduct_t* self,InfoProduct_t* info,site* s);
