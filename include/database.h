@@ -11,6 +11,7 @@ typedef struct olxsearchlink{
     char* link;
     int id;
     int minprice;
+    int maxprice;
     void(*Show)(struct olxsearchlink* self);
     void(*DeleteOnDataBase)(struct olxsearchlink* self);
     sqlite3* db;
@@ -19,11 +20,11 @@ typedef struct olxsearchlink{
 void ShowOlxSearchLink(struct olxsearchlink* self);
 void DeleteDataBaseOlxSearchLink(struct olxsearchlink* self);
 void CreateOlxSearchLink(olxsearchlink_t* olx);
-void InitOlxSearchLink(olxsearchlink_t* olx,char* link,int id,sqlite3* db,int minprice);
+void InitOlxSearchLink(olxsearchlink_t* olx,char* link,int id,sqlite3* db,int minprice,int maxprice);
 void DestroyOlxSearchLink(olxsearchlink_t olx);
 typedef struct olxdatabase{
     char namedatabase[50];
-    void(*AddSearchLink)(struct olxdatabase* self,char link[LINK_S],char minprice[PRICE_S]);
+    void(*AddSearchLink)(struct olxdatabase* self,char link[LINK_S],char minprice[PRICE_S],char maxprice[PRICE_S]);
     stdarray_t(*GetSearchLink)(struct olxdatabase* self,int start,int end,int* size);
     int (*GetCount)(struct olxdatabase* self);
     sqlite3* db;
@@ -31,7 +32,7 @@ typedef struct olxdatabase{
 
 int GetCount(olxdatabase_t* self);
 stdarray_t GetSearchLink(struct olxdatabase* self,int start,int end,int* size);
-void AddSearchLink(olxdatabase_t* self,char link[LINK_S],char minprice[PRICE_S]);
+void AddSearchLink(olxdatabase_t* self,char link[LINK_S],char minprice[PRICE_S],char maxprice[PRICE_S]);
 void CreateOlxDataBase(olxdatabase_t* olx);
 void InitDataBase(olxdatabase_t* olx,const char namedatabase[50]);
 void DestroyDataBase(olxdatabase_t* olx);

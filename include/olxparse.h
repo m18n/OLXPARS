@@ -34,6 +34,22 @@ typedef struct OlxAnalizSearch{
 void AnalizSearch(OlxAnalizSearch_t* self);
 void CreateOlxAnalizSearch(OlxAnalizSearch_t* olx,string url);
 void DeleteOlxAnalizSearch(OlxAnalizSearch_t* olx);
+typedef struct Step{
+    int startprice;
+    int endprice;
+    int countadver;
+    int step;
+}Step_t;
+void CreateStep(Step_t* step);
+void DeleteStep(Step_t step);
+typedef struct OlxSearch{
+    char url[200];
+    int minprice;
+    int maxprice;
+    
+}OlxSearch_t;
+void CreateOlxSearch(OlxSearch_t* olx);
+void DeleteOlxSearch(OlxSearch_t olx);
 // typedef struct olxdata
 // {
 //     char search[200];

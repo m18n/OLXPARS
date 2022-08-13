@@ -54,7 +54,7 @@ void Test(CURL* curl){
 void InputLink(olxdatabase_t* olx){
    
   while(true){
-    printf("INPUT LINK AND MIN PRICE : EXIT: 0\n");
+    printf("INPUT LINK AND MIN PRICE,MAX PRICE : EXIT: 0\n");
     int size=LINK_S+6;
     char data[size];
     strget(data,size,stdin);
@@ -67,7 +67,7 @@ void InputLink(olxdatabase_t* olx){
       int rsize=0;
       string* str=Tok(d,' ',&rsize);
       if(rsize>=2)
-        olx->AddSearchLink(olx,str[0].chararray,str[1].chararray);
+        olx->AddSearchLink(olx,str[0].chararray,str[1].chararray,str[2].chararray);
       DeleteStringArr(str,rsize);
     }
   }
@@ -182,11 +182,13 @@ void StartAnaliz(olxdatabase_t* olx){
   find.StartThreads(&find);
   char buff[200];
   for(int i=0;i<arr.length;i++){
+    
     task_t task;
     CreateTask(&task);
-    string* str=malloc(sizeof(string));
-    CreateStringCopyConst(str,s[i].link);
-    task.data=str;
+    OlxSearch_t* olx=malloc(sizeof(OlxSearch_t));
+    CreateOlxSearch(olx);
+    
+    task.data=olx;
     task.fun=GetMaxSearch;
     find.AddTasks(&find,task);
   }
@@ -223,7 +225,7 @@ int main(){
     system("clear");
     olxdatabase_t olx;
     InitDataBase(&olx,"olx.sqlite");
-    //Menu(&olx);
+    Menu(&olx);
     //strcpy(input.search,"https://www.olx.ua/d/list/q-car/?search%5Bfilter_float_price%3Afrom%5D=10&search%5Bfilter_float_price%3Ato%5D=200&page=1");    
     CURL* curl=NULL;
   //Test(curl);

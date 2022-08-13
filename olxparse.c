@@ -154,7 +154,20 @@ void CreateOlxAnalizSearch(OlxAnalizSearch_t* olx,string url){
 void DeleteOlxAnalizSearch(OlxAnalizSearch_t* olx){
     DeleteString(olx->url);
 }
-
+void CreateOlxSearch(OlxSearch_t* olx){
+    olx->maxprice=0;
+    olx->minprice=0;
+}
+void DeleteOlxSearch(OlxSearch_t olx){
+    
+}
+void CreateStep(Step_t* step){
+    step->countadver=0;
+    step->endprice=0;
+    step->startprice=0;
+}
+void DeleteStep(Step_t step){
+}
 // void ProcLink(PSsearch* pr){
 //     if(pr->link.chararray==NULL)
 //         return;
