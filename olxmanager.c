@@ -100,9 +100,10 @@ void DeleteFindPthread(findpthread_t* find){
 void DownloadSearch(void*data){
     datapthread_t* d=(datapthread_t*)data;
     OlxSearch_t* olx=(OlxSearch_t*)d->data;
-    
+    UrlSetFromPrice(olx->url,olx->minprice);
+    UrlSetToPrice(olx->url,olx->maxprice);
     site s=DownloadSite(olx->url,1000000000);
-    printf("\nPRICE MIN:%d MAX:%d  DONWLOAD BYTE: %d THREAD: %d\n",olx->minprice,olx->maxprice,s.indexrecord,d->pth);
+    printf("\n URL: %s PRICE MIN:%d MAX:%d  DONWLOAD BYTE: %d THREAD: %d\n",olx->url,olx->minprice,olx->maxprice,s.indexrecord,d->pth);
     free(d->data);
     free(data);
    

@@ -206,7 +206,6 @@ void StartAnaliz(olxdatabase_t* olx){
   CreateFindPthread(&find);
   InitFindPthread(&find,10);
   find.StartThreads(&find);
-  char buff[200];
   for(int i=0;i<arr.length;i++){
     s[i].Show(&s[i]);
    

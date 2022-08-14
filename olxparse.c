@@ -1,5 +1,20 @@
 #include"include/olxparse.h"
-
+void UrlSetFromPrice(char* url,int price){
+    int length=strlen(url);
+    char buff[200];
+    snprintf(buff,200,"%d",price);
+    strcpy(&url[length],"&search%5Bfilter_float_price:from%5D=");
+    length=strlen(url);
+    strcpy(&url[length],buff);
+}
+void UrlSetToPrice(char* url,int price){
+    int length=strlen(url);
+    char buff[200];
+    snprintf(buff,200,"%d",price);
+    strcpy(&url[length],"&search%5Bfilter_float_price:to%5D=");
+    length=strlen(url);
+    strcpy(&url[length],buff);
+}
 void SetPageUrl(string* url,int newpage){
     int page=url->SearchWordIndex(url,0,url->length,1,"page=");
     if(page==-1){

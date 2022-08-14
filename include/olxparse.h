@@ -1,6 +1,9 @@
 #pragma once
 #include"core.h"
 #include"corecurl.h"
+#define OLX_URL 400
+void UrlSetFromPrice(char* url,int price);
+void UrlSetToPrice(char* url,int price);
 void SetPageUrl(string* url,int newpage);
 int GetCountPageUrl(site* site);
 typedef struct IParseInfoProduct{
@@ -43,7 +46,7 @@ typedef struct Step{
 void CreateStep(Step_t* step);
 void DeleteStep(Step_t step);
 typedef struct OlxSearch{
-    char url[200];
+    char url[OLX_URL];
     int minprice;
     int maxprice;
     
