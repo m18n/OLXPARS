@@ -68,7 +68,7 @@ typedef struct datapthread
 } datapthread_t;
 
 
-void GetMaxSearch(void*data);
+void DownloadSearch(void*data);
 typedef struct findpthread{
     int countpthread;
     stdarray_t arrtasks;

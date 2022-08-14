@@ -5,6 +5,7 @@
 #include"include/olxparse.h"
 #include"include/olxmanager.h"
 #include <unistd.h>
+#include <math.h>
 #include"include/database.h"
 findpthread_t find;
 // olxdata Menu(){
@@ -169,7 +170,32 @@ void ShowLink(olxdatabase_t* olx){
   }
   DeleteStdArray(arr);
 }
-
+int RoundUp(int n){
+  if(n%50!=0){
+    if ( n / 10 % 10 < 5 ){
+      n = (n / 100 + 1) * 100;
+      n-=50;
+    }
+    else{
+      n = (n / 100 + 1) * 100;
+     
+    }
+  }
+return n;
+}
+int RoundDown(int n){
+  if(n%50!=0){
+    if ( n / 10 % 10 < 5 ){
+      n = n / 100 * 100;
+      
+    }
+    else{
+       n = n / 100 * 100;
+      n+=50;
+    }
+  }
+return n;
+}
 void StartAnaliz(olxdatabase_t* olx){
     system("clear");
   int size=0;
@@ -182,15 +208,45 @@ void StartAnaliz(olxdatabase_t* olx){
   find.StartThreads(&find);
   char buff[200];
   for(int i=0;i<arr.length;i++){
+    s[i].Show(&s[i]);
+   
+    int minprice=RoundUp(s[i].minprice);
+    printf("MIN PRICE: %d\n",minprice);
+    int maxprice=RoundDown(s[i].maxprice);
+    printf("MAX PRICE: %d\n",maxprice);
+    for(int j=minprice;j<maxprice;j+=50){
+      task_t task;
+      CreateTask(&task);
+      OlxSearch_t* olx=malloc(sizeof(OlxSearch_t));
+      CreateOlxSearch(olx);
+      olx->minprice=j;
+      olx->maxprice=j;
+      strcpy(olx->url,s[i].link);
+      task.data=olx;
+      task.fun=DownloadSearch;
+      find.AddTasks(&find,task);
+      OlxSearch_t* olx2=malloc(sizeof(OlxSearch_t));
+      CreateOlxSearch(olx2);
+      olx2->minprice=j+1;
+      olx2->maxprice=j+49;
+       strcpy(olx2->url,s[i].link);
+      task.data=olx2;
+      find.AddTasks(&find,task);
+      if(j==maxprice-50){
+        OlxSearch_t* olx3=malloc(sizeof(OlxSearch_t));
+        CreateOlxSearch(olx3);
+        olx3->minprice=j+50;
+        olx3->maxprice=j+50;
+         strcpy(olx3->url,s[i].link);
+        task.data=olx3;
+        find.AddTasks(&find,task);
+      }
+  
+    }
+    // for(int j=s[i].minprice;j<=s[i].maxprice;j+=50){
+    //   printf("URL: %s PRICE: %d\n",s[i].link,j);
+    // }
     
-    task_t task;
-    CreateTask(&task);
-    OlxSearch_t* olx=malloc(sizeof(OlxSearch_t));
-    CreateOlxSearch(olx);
-    
-    task.data=olx;
-    task.fun=GetMaxSearch;
-    find.AddTasks(&find,task);
   }
 
   int number=0;

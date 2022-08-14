@@ -97,12 +97,12 @@ void DeleteFindPthread(findpthread_t* find){
     StopThreads(find);
     DeleteStdArray(find->arrtasks);
 }
-void GetMaxSearch(void*data){
+void DownloadSearch(void*data){
     datapthread_t* d=(datapthread_t*)data;
     OlxSearch_t* olx=(OlxSearch_t*)d->data;
-    printf("\nSTART FUNCITON %s THREAD: %d\n",olx->url,d->pth);
+    
     site s=DownloadSite(olx->url,1000000000);
-    printf("\nDONWLOAD BYTE: %d THREAD: %d\n",s.indexrecord,d->pth);
+    printf("\nPRICE MIN:%d MAX:%d  DONWLOAD BYTE: %d THREAD: %d\n",olx->minprice,olx->maxprice,s.indexrecord,d->pth);
     free(d->data);
     free(data);
    
